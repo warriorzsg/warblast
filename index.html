@@ -17,17 +17,22 @@
     -webkit-tap-highlight-color:transparent;
 }
 
+html,body{
+    width:100%;
+    min-height:100%;
+}
+
 body{
     font-family:Arial,Helvetica,sans-serif;
     background:
         radial-gradient(circle at top,#10233d 0%,#050b14 55%,#02060b 100%);
-    color:white;
-    min-height:100vh;
+    color:#fff;
     overflow-x:hidden;
+    overscroll-behavior:none;
 }
 
 button{
-    font-family:inherit;
+    font:inherit;
     border:0;
     cursor:pointer;
 }
@@ -35,12 +40,10 @@ button{
 .app{
     width:100%;
     max-width:520px;
-    margin:auto;
     min-height:100vh;
-    padding:20px 15px 30px;
+    margin:auto;
+    padding:18px 15px 30px;
 }
-
-/* ================= HOME ================= */
 
 .screen{
     display:none;
@@ -50,46 +53,49 @@ button{
     display:block;
 }
 
+/* ================= HOME ================= */
+
 .home{
-    min-height:calc(100vh - 50px);
+    min-height:calc(100vh - 48px);
     display:flex;
     flex-direction:column;
-    justify-content:center;
     align-items:center;
+    justify-content:center;
     text-align:center;
 }
 
 .logo{
-    font-size:52px;
+    font-size:clamp(44px,13vw,58px);
+    line-height:1;
     font-weight:900;
     letter-spacing:-3px;
-    background:linear-gradient(135deg,#ffffff,#65d9ff,#587cff);
+    background:linear-gradient(135deg,#fff,#65d9ff,#587cff);
     -webkit-background-clip:text;
+    background-clip:text;
     -webkit-text-fill-color:transparent;
-    text-shadow:0 0 30px rgba(70,190,255,.25);
 }
 
 .subtitle{
-    margin-top:7px;
+    margin-top:8px;
     color:#7f9ab8;
-    font-size:14px;
+    font-size:12px;
     letter-spacing:2px;
 }
 
 .home-buttons{
     width:100%;
     max-width:330px;
-    margin-top:42px;
+    margin-top:38px;
 }
 
 .main-btn{
     width:100%;
-    padding:17px;
-    margin:7px 0;
+    padding:16px;
+    margin:6px 0;
     border-radius:15px;
+    color:#fff;
     font-size:17px;
     font-weight:800;
-    color:white;
     background:linear-gradient(135deg,#168cff,#615cff);
     box-shadow:0 8px 25px rgba(46,126,255,.25);
 }
@@ -105,12 +111,12 @@ button{
 }
 
 .stats-card{
-    margin-top:30px;
     width:100%;
     max-width:330px;
+    margin-top:25px;
+    padding:16px 10px;
     display:flex;
     justify-content:space-around;
-    padding:17px 10px;
     background:rgba(12,27,44,.8);
     border:1px solid #1c354d;
     border-radius:17px;
@@ -119,7 +125,7 @@ button{
 .stat span{
     display:block;
     color:#718ba6;
-    font-size:11px;
+    font-size:10px;
     text-transform:uppercase;
     letter-spacing:1px;
 }
@@ -130,217 +136,21 @@ button{
     font-size:21px;
 }
 
-.home-footer{
-    margin-top:35px;
-    color:#526a82;
-    font-size:11px;
-}
-
-/* ================= GAME ================= */
-
-.game-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:15px;
-}
-
-.game-title{
-    font-size:24px;
-    font-weight:900;
-}
-
-.icon-btn{
-    width:42px;
-    height:42px;
-    border-radius:12px;
-    background:#101d2d;
-    color:white;
-    border:1px solid #203750;
-    font-size:19px;
-}
-
-.score-row{
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-    gap:8px;
-    margin-bottom:15px;
-}
-
-.score-box{
-    background:#0c1b2c;
-    border:1px solid #1b344d;
-    border-radius:13px;
-    padding:10px;
-    text-align:center;
-}
-
-.score-box span{
-    display:block;
-    color:#718aa4;
-    font-size:10px;
-    text-transform:uppercase;
-}
-
-.score-box strong{
-    display:block;
-    margin-top:3px;
-    font-size:19px;
-}
-
-.board{
-    width:min(92vw,430px);
-    aspect-ratio:1;
-    margin:auto;
-    padding:6px;
-    display:grid;
-    grid-template-columns:repeat(8,1fr);
-    gap:4px;
-    background:#071321;
-    border:1px solid #203a54;
-    border-radius:15px;
-    box-shadow:0 15px 45px rgba(0,0,0,.35);
-}
-
-.cell{
-    border-radius:6px;
-    background:#0d1c2b;
-    border:1px solid rgba(255,255,255,.025);
-    transition:.12s;
-}
-
-.cell.filled{
-    background:linear-gradient(135deg,#28a9ff,#575dff);
-    box-shadow:
-        inset 0 0 10px rgba(255,255,255,.2),
-        0 2px 7px rgba(48,113,255,.3);
-}
-
-.cell.preview{
-    background:rgba(50,180,255,.35);
-}
-
-.cell.bad-preview{
-    background:rgba(255,70,70,.3);
-}
-
-.pieces-title{
-    text-align:center;
-    margin:19px 0 8px;
-    color:#728ba5;
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:1.5px;
-}
-
-.pieces{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
-    min-height:95px;
-}
-
-.piece-slot{
-    min-height:90px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#091727;
-    border:1px solid #183149;
-    border-radius:14px;
-}
-
-.piece{
-    display:grid;
-    gap:3px;
-    padding:5px;
-    cursor:pointer;
-    touch-action:none;
-}
-
-.block{
-    width:18px;
-    height:18px;
-    border-radius:4px;
-    background:linear-gradient(135deg,#35c5ff,#625cff);
-    box-shadow:0 2px 5px rgba(45,126,255,.3);
-}
-
-.empty-block{
-    width:18px;
-    height:18px;
-}
-
-.game-help{
-    text-align:center;
-    margin-top:13px;
-    color:#526b84;
-    font-size:11px;
-}
-
-/* ================= GAME OVER ================= */
-
-.game-over{
-    min-height:calc(100vh - 50px);
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-}
-
-.game-over-icon{
-    font-size:65px;
-    margin-bottom:12px;
-}
-
-.game-over h2{
-    font-size:34px;
-    margin-bottom:7px;
-}
-
-.final-score{
-    color:#7892ac;
-    font-size:14px;
-}
-
-.final-score strong{
-    display:block;
-    color:white;
-    font-size:42px;
-    margin-top:7px;
-}
-
-.new-record{
-    margin-top:10px;
-    color:#50c8ff;
-    font-weight:bold;
-    display:none;
-}
-
-.over-buttons{
-    width:100%;
-    max-width:330px;
-    margin-top:35px;
-}
-
-/* ================= WORLD CHAT ================= */
-
 .world-chat{
-    margin-top:25px;
     width:100%;
     max-width:330px;
+    margin-top:22px;
+    padding:15px;
     background:#091827;
     border:1px solid #1a344c;
     border-radius:17px;
-    padding:15px;
 }
 
 .chat-header{
     display:flex;
-    justify-content:space-between;
     align-items:center;
-    gap:10px;
+    justify-content:space-between;
+    gap:8px;
 }
 
 .chat-title{
@@ -351,7 +161,7 @@ button{
 }
 
 .chat-icon{
-    font-size:25px;
+    font-size:24px;
 }
 
 .chat-title strong{
@@ -361,25 +171,25 @@ button{
 
 .chat-title span{
     display:block;
+    margin-top:3px;
     color:#617b95;
     font-size:10px;
-    margin-top:3px;
 }
 
 .coming-soon{
-    font-size:8px;
     padding:5px 7px;
     border-radius:7px;
     background:#162b40;
     color:#55c8ff;
+    font-size:8px;
     white-space:nowrap;
 }
 
 .chat-preview{
-    margin-top:15px;
-    padding:14px;
-    border-radius:12px;
+    margin-top:13px;
+    padding:13px;
     background:#071321;
+    border-radius:12px;
     color:#7891aa;
     font-size:12px;
     line-height:1.5;
@@ -390,7 +200,7 @@ button{
 }
 
 .chat-status{
-    margin-top:10px;
+    margin-top:9px;
     color:#526b83;
     font-size:9px;
 }
@@ -399,10 +209,8 @@ button{
     color:#55c8ff;
 }
 
-/* ================= CREDIT ================= */
-
 .credit{
-    margin-top:25px;
+    margin-top:22px;
     text-align:center;
 }
 
@@ -425,17 +233,252 @@ button{
     font-size:10px;
 }
 
+.home-footer{
+    margin-top:22px;
+    color:#526a82;
+    font-size:10px;
+}
+
+/* ================= GAME ================= */
+
+.game-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:14px;
+}
+
+.game-title{
+    font-size:24px;
+    font-weight:900;
+}
+
+.icon-btn{
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    background:#101d2d;
+    color:#fff;
+    border:1px solid #203750;
+    font-size:18px;
+}
+
+.score-row{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    margin-bottom:14px;
+}
+
+.score-box{
+    padding:10px;
+    text-align:center;
+    background:#0c1b2c;
+    border:1px solid #1b344d;
+    border-radius:13px;
+}
+
+.score-box span{
+    display:block;
+    color:#718aa4;
+    font-size:9px;
+    text-transform:uppercase;
+}
+
+.score-box strong{
+    display:block;
+    margin-top:3px;
+    font-size:19px;
+}
+
+.board{
+    width:min(92vw,430px);
+    aspect-ratio:1;
+    margin:auto;
+    padding:6px;
+    display:grid;
+    grid-template-columns:repeat(8,1fr);
+    gap:4px;
+    background:#071321;
+    border:1px solid #203a54;
+    border-radius:15px;
+    box-shadow:0 15px 45px rgba(0,0,0,.35);
+    touch-action:none;
+}
+
+.cell{
+    min-width:0;
+    min-height:0;
+    border-radius:6px;
+    background:#0d1c2b;
+    border:1px solid rgba(255,255,255,.025);
+    transition:background .08s,transform .08s;
+}
+
+.cell.filled{
+    background:linear-gradient(135deg,#28a9ff,#575dff);
+    box-shadow:
+        inset 0 0 10px rgba(255,255,255,.2),
+        0 2px 7px rgba(48,113,255,.3);
+}
+
+.cell.preview{
+    background:rgba(50,180,255,.42);
+    transform:scale(.94);
+}
+
+.cell.bad-preview{
+    background:rgba(255,70,70,.38);
+    transform:scale(.94);
+}
+
+.pieces-title{
+    margin:18px 0 8px;
+    color:#728ba5;
+    text-align:center;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+}
+
+.pieces{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    min-height:92px;
+}
+
+.piece-slot{
+    min-height:90px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#091727;
+    border:1px solid #183149;
+    border-radius:14px;
+    transition:border-color .12s,background .12s;
+}
+
+.piece-slot.selected{
+    border-color:#45c8ff;
+    background:#0c2034;
+}
+
+.piece{
+    display:grid;
+    gap:3px;
+    padding:8px;
+    cursor:grab;
+    touch-action:none;
+    user-select:none;
+    -webkit-user-select:none;
+}
+
+.piece:active{
+    cursor:grabbing;
+}
+
+.block{
+    width:18px;
+    height:18px;
+    border-radius:4px;
+    background:linear-gradient(135deg,#35c5ff,#625cff);
+    box-shadow:0 2px 5px rgba(45,126,255,.3);
+}
+
+.empty-block{
+    width:18px;
+    height:18px;
+}
+
+.game-help{
+    margin-top:12px;
+    text-align:center;
+    color:#526b84;
+    font-size:10px;
+}
+
+/* ================= DRAG GHOST ================= */
+
+.drag-ghost{
+    position:fixed;
+    z-index:1000;
+    pointer-events:none;
+    display:grid;
+    gap:3px;
+    padding:6px;
+    opacity:.92;
+    transform:translate(-50%,-125%) scale(1.08);
+    filter:drop-shadow(0 10px 15px rgba(0,0,0,.35));
+}
+
+.drag-ghost .block{
+    width:20px;
+    height:20px;
+}
+
+.drag-ghost .empty-block{
+    width:20px;
+    height:20px;
+}
+
+/* ================= GAME OVER ================= */
+
+.game-over{
+    min-height:calc(100vh - 48px);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+}
+
+.game-over-icon{
+    font-size:62px;
+}
+
+.game-over h2{
+    margin-top:8px;
+    font-size:34px;
+}
+
+.final-score{
+    margin-top:8px;
+    color:#7892ac;
+    font-size:14px;
+}
+
+.final-score strong{
+    display:block;
+    margin-top:5px;
+    color:#fff;
+    font-size:42px;
+}
+
+.new-record{
+    display:none;
+    margin-top:10px;
+    color:#50c8ff;
+    font-weight:bold;
+}
+
+.over-buttons{
+    width:100%;
+    max-width:330px;
+    margin-top:30px;
+}
+
 /* ================= MODAL ================= */
 
 .modal{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.7);
+    z-index:2000;
     display:none;
     align-items:center;
     justify-content:center;
     padding:20px;
-    z-index:20;
+    background:rgba(0,0,0,.72);
 }
 
 .modal.show{
@@ -445,35 +488,42 @@ button{
 .modal-box{
     width:100%;
     max-width:340px;
+    padding:22px;
     background:#0a1929;
     border:1px solid #24415b;
     border-radius:20px;
-    padding:22px;
     text-align:center;
 }
 
 .modal-box h3{
-    margin-bottom:15px;
+    margin-bottom:12px;
 }
 
 .modal-box p{
+    margin-bottom:18px;
     color:#718aa4;
     font-size:13px;
     line-height:1.6;
-    margin-bottom:20px;
 }
 
-/* ================= RESPONSIVE ================= */
+/* ================= SMALL SCREEN ================= */
 
 @media(max-width:380px){
-    .logo{
-        font-size:45px;
-    }
 
     .block,
     .empty-block{
         width:15px;
         height:15px;
+    }
+
+    .piece{
+        gap:2px;
+    }
+
+    .drag-ghost .block,
+    .drag-ghost .empty-block{
+        width:17px;
+        height:17px;
     }
 }
 </style>
@@ -483,216 +533,211 @@ button{
 
 <div class="app">
 
-    <!-- ================= HOME SCREEN ================= -->
+<!-- ================= HOME ================= -->
 
-    <section id="homeScreen" class="screen active">
+<section id="homeScreen" class="screen active">
 
-        <div class="home">
+<div class="home">
 
-            <div class="logo">WARBLAST</div>
-            <div class="subtitle">BLOCK • BLAST • CONQUER</div>
+    <div class="logo">WARBLAST</div>
 
-            <div class="home-buttons">
+    <div class="subtitle">
+        BLOCK • BLAST • CONQUER
+    </div>
 
-                <button class="main-btn" id="playBtn">
-                    ▶ PLAY
-                </button>
+    <div class="home-buttons">
 
-                <button class="main-btn secondary-btn" id="soundBtn">
-                    🔊 SOUND ON
-                </button>
+        <button class="main-btn" id="playBtn">
+            ▶ PLAY
+        </button>
 
-                <button class="main-btn secondary-btn" id="installBtn" style="display:none;">
-                    📱 INSTALL GAME
-                </button>
+        <button class="main-btn secondary-btn" id="soundBtn">
+            🔊 SOUND ON
+        </button>
 
+        <button
+            class="main-btn secondary-btn"
+            id="installBtn"
+            style="display:none;">
+            📱 INSTALL GAME
+        </button>
+
+    </div>
+
+    <div class="stats-card">
+
+        <div class="stat">
+            <span>Best Score</span>
+            <strong id="homeBest">0</strong>
+        </div>
+
+        <div class="stat">
+            <span>Game</span>
+            <strong>∞</strong>
+        </div>
+
+    </div>
+
+    <div class="world-chat">
+
+        <div class="chat-header">
+
+            <div class="chat-title">
+                <div class="chat-icon">🌎</div>
+
+                <div>
+                    <strong>World Chat</strong>
+                    <span>Connect with WarBlast players</span>
+                </div>
             </div>
 
-            <div class="stats-card">
-
-                <div class="stat">
-                    <span>Best Score</span>
-                    <strong id="homeBest">0</strong>
-                </div>
-
-                <div class="stat">
-                    <span>Game</span>
-                    <strong>∞</strong>
-                </div>
-
-            </div>
-
-            <div class="world-chat">
-
-                <div class="chat-header">
-
-                    <div class="chat-title">
-                        <div class="chat-icon">🌎</div>
-
-                        <div>
-                            <strong>World Chat</strong>
-                            <span>Connect with WarBlast players</span>
-                        </div>
-                    </div>
-
-                    <div class="coming-soon">
-                        COMING SOON
-                    </div>
-
-                </div>
-
-                <div class="chat-preview">
-                    💬 World Chat is currently under development.
-                    <br><br>
-                    <b>Samir is working on it 👨‍💻</b>
-                </div>
-
-                <div class="chat-status">
-                    Global player chat will arrive in a future update
-                    <span>• Future Update</span>
-                </div>
-
-            </div>
-
-            <div class="credit">
-
-                <div class="credit-label">
-                    Game Developer
-                </div>
-
-                <div class="credit-name">
-                    Samir Parajuli
-                </div>
-
-                <div class="credit-role">
-                    Creator & Developer of WarBlast ⚔️
-                </div>
-
-            </div>
-
-            <div class="home-footer">
-                WarBlast © 2026
+            <div class="coming-soon">
+                COMING SOON
             </div>
 
         </div>
 
-    </section>
-
-
-    <!-- ================= GAME SCREEN ================= -->
-
-    <section id="gameScreen" class="screen">
-
-        <div class="game-header">
-
-            <div class="game-title">
-                ⚔️ WarBlast
-            </div>
-
-            <button class="icon-btn" id="homeBtn">
-                🏠
-            </button>
-
+        <div class="chat-preview">
+            💬 World Chat is currently under development.
+            <br><br>
+            <b>Samir is working on it 👨‍💻</b>
         </div>
 
-        <div class="score-row">
-
-            <div class="score-box">
-                <span>Score</span>
-                <strong id="score">0</strong>
-            </div>
-
-            <div class="score-box">
-                <span>Combo</span>
-                <strong id="combo">0</strong>
-            </div>
-
-            <div class="score-box">
-                <span>Best</span>
-                <strong id="best">0</strong>
-            </div>
-
+        <div class="chat-status">
+            Global player chat will arrive in a future update
+            <span>• Future Update</span>
         </div>
 
-        <div id="board" class="board"></div>
+    </div>
 
-        <div class="pieces-title">
-            Choose a block
+    <div class="credit">
+        <div class="credit-label">Game Developer</div>
+        <div class="credit-name">Samir Parajuli</div>
+        <div class="credit-role">
+            Creator & Developer of WarBlast ⚔️
         </div>
+    </div>
 
-        <div id="pieces" class="pieces"></div>
+    <div class="home-footer">
+        WarBlast © 2026
+    </div>
 
-        <div class="game-help">
-            Tap a block, then tap the board to place it.
-        </div>
+</div>
 
-    </section>
+</section>
 
 
-    <!-- ================= GAME OVER SCREEN ================= -->
+<!-- ================= GAME ================= -->
 
-    <section id="gameOverScreen" class="screen">
+<section id="gameScreen" class="screen">
 
-        <div class="game-over">
+<div class="game-header">
 
-            <div class="game-over-icon">
-                💥
-            </div>
+    <div class="game-title">
+        ⚔️ WarBlast
+    </div>
 
-            <h2>GAME OVER</h2>
+    <button class="icon-btn" id="homeBtn">
+        🏠
+    </button>
 
-            <div class="final-score">
-                Your Score
+</div>
 
-                <strong id="finalScore">
-                    0
-                </strong>
-            </div>
+<div class="score-row">
 
-            <div id="newRecord" class="new-record">
-                🏆 NEW BEST SCORE!
-            </div>
+    <div class="score-box">
+        <span>Score</span>
+        <strong id="score">0</strong>
+    </div>
 
-            <div class="over-buttons">
+    <div class="score-box">
+        <span>Combo</span>
+        <strong id="combo">0</strong>
+    </div>
 
-                <button class="main-btn" id="againBtn">
-                    🔄 PLAY AGAIN
-                </button>
+    <div class="score-box">
+        <span>Best</span>
+        <strong id="best">0</strong>
+    </div>
 
-                <button class="main-btn secondary-btn" id="overHomeBtn">
-                    🏠 HOME
-                </button>
+</div>
 
-            </div>
+<div id="board" class="board"></div>
 
-        </div>
+<div class="pieces-title">
+    Drag a block onto the board
+</div>
 
-    </section>
+<div id="pieces" class="pieces"></div>
+
+<div class="game-help">
+    Tap a block and tap the board, or drag it directly.
+</div>
+
+</section>
+
+
+<!-- ================= GAME OVER ================= -->
+
+<section id="gameOverScreen" class="screen">
+
+<div class="game-over">
+
+    <div class="game-over-icon">
+        💥
+    </div>
+
+    <h2>GAME OVER</h2>
+
+    <div class="final-score">
+        Your Score
+        <strong id="finalScore">0</strong>
+    </div>
+
+    <div id="newRecord" class="new-record">
+        🏆 NEW BEST SCORE!
+    </div>
+
+    <div class="over-buttons">
+
+        <button class="main-btn" id="againBtn">
+            🔄 PLAY AGAIN
+        </button>
+
+        <button class="main-btn secondary-btn" id="overHomeBtn">
+            🏠 HOME
+        </button>
+
+    </div>
+
+</div>
+
+</section>
 
 </div>
 
 
-<!-- ================= MODAL ================= -->
+<!-- ================= HOME MODAL ================= -->
 
-<div id="pauseModal" class="modal">
+<div id="homeModal" class="modal">
 
-    <div class="modal-box">
+<div class="modal-box">
 
-        <h3>🏠 Return Home?</h3>
+    <h3>🏠 Return Home?</h3>
 
-        <p>
-            Your current game will end if you return to the home screen.
-        </p>
+    <p>
+        Your current game will end if you return to the home screen.
+    </p>
 
-        <button class="main-btn" id="confirmHome">
-            🏠 HOME
-        </button>
+    <button class="main-btn" id="confirmHome">
+        🏠 HOME
+    </button>
 
-        <button class="main-btn secondary-btn" id="cancelHome">
-            CANCEL
-        </button>
+    <button class="main-btn secondary-btn" id="cancelHome">
+        CANCEL
+    </button>
 
-    </div>
+</div>
 
 </div>
 
@@ -703,10 +748,11 @@ button{
    WARBLAST
    ========================================================= */
 
-const BOARD_SIZE = 8;
+const SIZE = 8;
 
 let board = [];
 let pieces = [];
+
 let selectedPiece = null;
 
 let score = 0;
@@ -718,10 +764,11 @@ let bestScore =
 let soundOn =
     localStorage.getItem("warblast-sound") !== "off";
 
-let deferredPrompt = null;
+let drag = null;
+let dragGhost = null;
 
 
-/* ================= SCREEN SYSTEM ================= */
+/* ================= DOM ================= */
 
 const homeScreen =
     document.getElementById("homeScreen");
@@ -732,19 +779,11 @@ const gameScreen =
 const gameOverScreen =
     document.getElementById("gameOverScreen");
 
-function showScreen(screen){
+const boardEl =
+    document.getElementById("board");
 
-    homeScreen.classList.remove("active");
-    gameScreen.classList.remove("active");
-    gameOverScreen.classList.remove("active");
-
-    screen.classList.add("active");
-
-    window.scrollTo(0,0);
-}
-
-
-/* ================= UI ================= */
+const piecesEl =
+    document.getElementById("pieces");
 
 const scoreEl =
     document.getElementById("score");
@@ -764,13 +803,30 @@ const finalScoreEl =
 const newRecordEl =
     document.getElementById("newRecord");
 
-bestEl.textContent = bestScore;
-homeBestEl.textContent = bestScore;
+const homeModal =
+    document.getElementById("homeModal");
+
+const soundBtn =
+    document.getElementById("soundBtn");
+
+
+/* ================= SCREEN ================= */
+
+function showScreen(screen){
+
+    homeScreen.classList.remove("active");
+    gameScreen.classList.remove("active");
+    gameOverScreen.classList.remove("active");
+
+    screen.classList.add("active");
+
+    window.scrollTo(0,0);
+}
 
 
 /* ================= SOUND ================= */
 
-function beep(){
+function beep(frequency=500,duration=.1){
 
     if(!soundOn) return;
 
@@ -785,8 +841,8 @@ function beep(){
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
 
-        osc.frequency.value = 500;
         osc.type = "sine";
+        osc.frequency.value = frequency;
 
         gain.gain.setValueAtTime(
             .06,
@@ -795,14 +851,14 @@ function beep(){
 
         gain.gain.exponentialRampToValueAtTime(
             .001,
-            ctx.currentTime + .12
+            ctx.currentTime + duration
         );
 
         osc.connect(gain);
         gain.connect(ctx.destination);
 
         osc.start();
-        osc.stop(ctx.currentTime + .12);
+        osc.stop(ctx.currentTime + duration);
 
     }catch(e){}
 
@@ -820,6 +876,8 @@ const SHAPES = [
     [[1,1,1]],
 
     [[1,1,1,1]],
+
+    [[1,1,1,1,1]],
 
     [[1,1],
      [1,1]],
@@ -865,13 +923,13 @@ const SHAPES = [
 ];
 
 
-/* ================= GAME INIT ================= */
+/* ================= GAME ================= */
 
-function createEmptyBoard(){
+function emptyBoard(){
 
     return Array.from(
-        {length:BOARD_SIZE},
-        () => Array(BOARD_SIZE).fill(false)
+        {length:SIZE},
+        () => Array(SIZE).fill(false)
     );
 
 }
@@ -879,15 +937,16 @@ function createEmptyBoard(){
 
 function startGame(){
 
-    board = createEmptyBoard();
+    stopDrag();
+
+    board = emptyBoard();
 
     score = 0;
     combo = 0;
-
     selectedPiece = null;
 
-    scoreEl.textContent = score;
-    comboEl.textContent = combo;
+    scoreEl.textContent = "0";
+    comboEl.textContent = "0";
     bestEl.textContent = bestScore;
 
     generatePieces();
@@ -902,14 +961,12 @@ function startGame(){
 
 function randomShape(){
 
-    const shape =
+    const source =
         SHAPES[
-            Math.floor(
-                Math.random() * SHAPES.length
-            )
+            Math.floor(Math.random()*SHAPES.length)
         ];
 
-    return shape.map(row => [...row]);
+    return source.map(row => [...row]);
 
 }
 
@@ -922,17 +979,37 @@ function generatePieces(){
         randomShape()
     ];
 
+    selectedPiece = null;
+
     renderPieces();
 
 }
 
 
+function countBlocks(shape){
+
+    let count = 0;
+
+    for(const row of shape){
+
+        for(const value of row){
+
+            if(value) count++;
+
+        }
+
+    }
+
+    return count;
+
+}
+
+
+/* ================= RENDER PIECES ================= */
+
 function renderPieces(){
 
-    const container =
-        document.getElementById("pieces");
-
-    container.innerHTML = "";
+    piecesEl.innerHTML = "";
 
     pieces.forEach((shape,index)=>{
 
@@ -941,57 +1018,69 @@ function renderPieces(){
 
         slot.className = "piece-slot";
 
+        if(selectedPiece === index){
+            slot.classList.add("selected");
+        }
+
+        if(!shape){
+
+            piecesEl.appendChild(slot);
+            return;
+
+        }
+
         const piece =
-            document.createElement("div");
-
-        piece.className = "piece";
-
-        shape.forEach(row=>{
-
-            row.forEach(value=>{
-
-                const block =
-                    document.createElement("div");
-
-                if(value){
-
-                    block.className = "block";
-
-                }else{
-
-                    block.className = "empty-block";
-
-                }
-
-                piece.appendChild(block);
-
-            });
-
-        });
-
-        piece.addEventListener("click",()=>{
-
-            if(!pieces[index]) return;
-
-            selectedPiece = index;
-
-            document
-                .querySelectorAll(".piece-slot")
-                .forEach(x =>
-                    x.style.borderColor = "#183149"
-                );
-
-            slot.style.borderColor = "#45c8ff";
-
-            beep();
-
-        });
+            createPieceElement(shape,index);
 
         slot.appendChild(piece);
 
-        container.appendChild(slot);
+        piecesEl.appendChild(slot);
 
     });
+
+}
+
+
+function createPieceElement(shape,index){
+
+    const piece =
+        document.createElement("div");
+
+    piece.className = "piece";
+
+    piece.dataset.index = index;
+
+    for(let r=0;r<shape.length;r++){
+
+        for(let c=0;c<shape[r].length;c++){
+
+            const block =
+                document.createElement("div");
+
+            block.className =
+                shape[r][c]
+                ? "block"
+                : "empty-block";
+
+            piece.appendChild(block);
+
+        }
+
+    }
+
+    /*
+       Pointer Events:
+       - Mobile touch
+       - Mouse
+       - Stylus
+    */
+
+    piece.addEventListener(
+        "pointerdown",
+        startDrag
+    );
+
+    return piece;
 
 }
 
@@ -1000,14 +1089,11 @@ function renderPieces(){
 
 function renderBoard(){
 
-    const boardEl =
-        document.getElementById("board");
-
     boardEl.innerHTML = "";
 
-    for(let r=0;r<BOARD_SIZE;r++){
+    for(let r=0;r<SIZE;r++){
 
-        for(let c=0;c<BOARD_SIZE;c++){
+        for(let c=0;c<SIZE;c++){
 
             const cell =
                 document.createElement("div");
@@ -1015,18 +1101,11 @@ function renderBoard(){
             cell.className = "cell";
 
             if(board[r][c]){
-
                 cell.classList.add("filled");
-
             }
 
             cell.dataset.row = r;
             cell.dataset.col = c;
-
-            cell.addEventListener(
-                "click",
-                () => placeSelected(r,c)
-            );
 
             boardEl.appendChild(cell);
 
@@ -1037,7 +1116,7 @@ function renderBoard(){
 }
 
 
-/* ================= CHECK PLACEMENT ================= */
+/* ================= PLACEMENT ================= */
 
 function canPlace(shape,row,col){
 
@@ -1052,19 +1131,15 @@ function canPlace(shape,row,col){
 
             if(
                 rr < 0 ||
-                rr >= BOARD_SIZE ||
+                rr >= SIZE ||
                 cc < 0 ||
-                cc >= BOARD_SIZE
+                cc >= SIZE
             ){
-
                 return false;
-
             }
 
             if(board[rr][cc]){
-
                 return false;
-
             }
 
         }
@@ -1076,21 +1151,17 @@ function canPlace(shape,row,col){
 }
 
 
-/* ================= PLACE ================= */
+function placePiece(index,row,col){
 
-function placeSelected(row,col){
+    const shape = pieces[index];
 
-    if(selectedPiece === null) return;
-
-    const shape =
-        pieces[selectedPiece];
-
-    if(!shape) return;
+    if(!shape) return false;
 
     if(!canPlace(shape,row,col)){
 
-        beep();
-        return;
+        beep(180,.08);
+
+        return false;
 
     }
 
@@ -1112,48 +1183,54 @@ function placeSelected(row,col){
 
     combo++;
 
-    scoreEl.textContent = score;
-    comboEl.textContent = combo;
-
-    beep();
-
-    pieces[selectedPiece] = null;
-
+    pieces[index] = null;
     selectedPiece = null;
 
     clearLines();
 
+    updateScore();
+
+    beep(620,.08);
+
+    if(navigator.vibrate){
+        navigator.vibrate(12);
+    }
+
     renderBoard();
     renderPieces();
 
-    if(pieces.every(p => p === null)){
+    if(pieces.every(piece => piece === null)){
 
         generatePieces();
 
     }
 
-    setTimeout(checkGameOver,80);
+    setTimeout(checkGameOver,70);
+
+    return true;
 
 }
 
 
-/* ================= COUNT BLOCKS ================= */
+/* ================= SCORE ================= */
 
-function countBlocks(shape){
+function updateScore(){
 
-    let total = 0;
+    scoreEl.textContent = score;
+    comboEl.textContent = combo;
 
-    shape.forEach(row=>{
+    if(score > bestScore){
 
-        row.forEach(value=>{
+        bestScore = score;
 
-            if(value) total++;
+        localStorage.setItem(
+            "warblast-best",
+            bestScore
+        );
 
-        });
+    }
 
-    });
-
-    return total;
+    bestEl.textContent = bestScore;
 
 }
 
@@ -1162,101 +1239,440 @@ function countBlocks(shape){
 
 function clearLines(){
 
-    let rowsToClear = [];
-    let colsToClear = [];
+    const rows = [];
+    const cols = [];
 
-    for(let r=0;r<BOARD_SIZE;r++){
+    for(let r=0;r<SIZE;r++){
 
         if(board[r].every(Boolean)){
-
-            rowsToClear.push(r);
-
+            rows.push(r);
         }
 
     }
 
-    for(let c=0;c<BOARD_SIZE;c++){
+    for(let c=0;c<SIZE;c++){
 
         let full = true;
 
-        for(let r=0;r<BOARD_SIZE;r++){
+        for(let r=0;r<SIZE;r++){
 
             if(!board[r][c]){
-
                 full = false;
                 break;
-
             }
 
         }
 
         if(full){
+            cols.push(c);
+        }
 
-            colsToClear.push(c);
+    }
+
+    if(rows.length === 0 && cols.length === 0){
+        return;
+    }
+
+    const totalLines =
+        rows.length + cols.length;
+
+    score +=
+        totalLines *
+        10 *
+        Math.max(combo,1);
+
+    for(const r of rows){
+
+        for(let c=0;c<SIZE;c++){
+            board[r][c] = false;
+        }
+
+    }
+
+    for(const c of cols){
+
+        for(let r=0;r<SIZE;r++){
+            board[r][c] = false;
+        }
+
+    }
+
+    beep(800,.14);
+
+    if(navigator.vibrate){
+        navigator.vibrate(35);
+    }
+
+}
+
+
+/* =========================================================
+   SMOOTH DRAG SYSTEM
+   ========================================================= */
+
+function startDrag(event){
+
+    event.preventDefault();
+
+    const piece =
+        event.currentTarget;
+
+    const index =
+        Number(piece.dataset.index);
+
+    if(!pieces[index]) return;
+
+    stopDrag();
+
+    selectedPiece = index;
+
+    renderPieces();
+
+    drag = {
+        index:index,
+        pointerId:event.pointerId,
+        x:event.clientX,
+        y:event.clientY,
+        row:null,
+        col:null
+    };
+
+    piece.setPointerCapture?.(event.pointerId);
+
+    createDragGhost(
+        pieces[index],
+        event.clientX,
+        event.clientY
+    );
+
+    updateDragPosition(
+        event.clientX,
+        event.clientY
+    );
+
+    window.addEventListener(
+        "pointermove",
+        onDragMove,
+        {passive:false}
+    );
+
+    window.addEventListener(
+        "pointerup",
+        onDragEnd,
+        {passive:false}
+    );
+
+    window.addEventListener(
+        "pointercancel",
+        onDragEnd,
+        {passive:false}
+    );
+
+}
+
+
+function onDragMove(event){
+
+    if(!drag) return;
+
+    event.preventDefault();
+
+    drag.x = event.clientX;
+    drag.y = event.clientY;
+
+    updateDragPosition(
+        event.clientX,
+        event.clientY
+    );
+
+}
+
+
+function onDragEnd(event){
+
+    if(!drag) return;
+
+    event.preventDefault();
+
+    const row = drag.row;
+    const col = drag.col;
+    const index = drag.index;
+
+    const valid =
+        row !== null &&
+        col !== null &&
+        pieces[index] &&
+        canPlace(
+            pieces[index],
+            row,
+            col
+        );
+
+    stopDrag();
+
+    if(valid){
+
+        placePiece(index,row,col);
+
+    }else{
+
+        renderBoard();
+        renderPieces();
+
+    }
+
+}
+
+
+function stopDrag(){
+
+    window.removeEventListener(
+        "pointermove",
+        onDragMove
+    );
+
+    window.removeEventListener(
+        "pointerup",
+        onDragEnd
+    );
+
+    window.removeEventListener(
+        "pointercancel",
+        onDragEnd
+    );
+
+    if(dragGhost){
+
+        dragGhost.remove();
+        dragGhost = null;
+
+    }
+
+    drag = null;
+
+}
+
+
+/* ================= DRAG GHOST ================= */
+
+function createDragGhost(shape,x,y){
+
+    dragGhost =
+        document.createElement("div");
+
+    dragGhost.className =
+        "drag-ghost";
+
+    for(const row of shape){
+
+        for(const value of row){
+
+            const block =
+                document.createElement("div");
+
+            block.className =
+                value
+                ? "block"
+                : "empty-block";
+
+            dragGhost.appendChild(block);
 
         }
 
     }
 
+    document.body.appendChild(dragGhost);
+
+    positionGhost(x,y);
+
+}
+
+
+function positionGhost(x,y){
+
+    if(!dragGhost) return;
+
+    dragGhost.style.left = x + "px";
+    dragGhost.style.top = y + "px";
+
+}
+
+
+/* ================= BOARD DRAG PREVIEW ================= */
+
+function updateDragPosition(x,y){
+
+    if(!drag) return;
+
+    positionGhost(x,y);
+
+    const rect =
+        boardEl.getBoundingClientRect();
+
+    /*
+       Pointer must be inside board.
+    */
+
     if(
-        rowsToClear.length === 0 &&
-        colsToClear.length === 0
+        x < rect.left ||
+        x > rect.right ||
+        y < rect.top ||
+        y > rect.bottom
     ){
+
+        drag.row = null;
+        drag.col = null;
+
+        clearPreview();
 
         return;
 
     }
 
-    const cleared =
-        rowsToClear.length +
-        colsToClear.length;
+    const cellWidth =
+        rect.width / SIZE;
 
-    score += cleared * 10 * Math.max(combo,1);
+    const cellHeight =
+        rect.height / SIZE;
 
-    for(const r of rowsToClear){
+    /*
+       The ghost is shown above the finger.
+       Move the preview slightly upward so
+       the player can see the target.
+    */
 
-        for(let c=0;c<BOARD_SIZE;c++){
+    const targetX = x;
+    const targetY = y - 65;
 
-            board[r][c] = false;
+    let col =
+        Math.floor(
+            (targetX - rect.left) /
+            cellWidth
+        );
 
-        }
+    let row =
+        Math.floor(
+            (targetY - rect.top) /
+            cellHeight
+        );
+
+    const shape =
+        pieces[drag.index];
+
+    if(!shape){
+
+        clearPreview();
+        return;
 
     }
 
-    for(const c of colsToClear){
+    /*
+       Center the shape around the pointer.
+    */
 
-        for(let r=0;r<BOARD_SIZE;r++){
+    const shapeWidth =
+        shape[0].length;
 
-            board[r][c] = false;
+    const shapeHeight =
+        shape.length;
 
-        }
+    col -= Math.floor(shapeWidth / 2);
+    row -= Math.floor(shapeHeight / 2);
 
-    }
+    drag.row = row;
+    drag.col = col;
 
-    scoreEl.textContent = score;
+    showPreview(
+        shape,
+        row,
+        col
+    );
 
 }
 
 
-/* ================= GAME OVER CHECK ================= */
+/* ================= PREVIEW ================= */
+
+function clearPreview(){
+
+    boardEl
+        .querySelectorAll(".preview,.bad-preview")
+        .forEach(cell=>{
+            cell.classList.remove(
+                "preview",
+                "bad-preview"
+            );
+        });
+
+}
+
+
+function showPreview(shape,row,col){
+
+    clearPreview();
+
+    const valid =
+        canPlace(shape,row,col);
+
+    for(let r=0;r<shape.length;r++){
+
+        for(let c=0;c<shape[r].length;c++){
+
+            if(!shape[r][c]) continue;
+
+            const rr = row+r;
+            const cc = col+c;
+
+            if(
+                rr < 0 ||
+                rr >= SIZE ||
+                cc < 0 ||
+                cc >= SIZE
+            ){
+                continue;
+            }
+
+            const cell =
+                boardEl.querySelector(
+                    `.cell[data-row="${rr}"][data-col="${cc}"]`
+                );
+
+            if(cell){
+
+                cell.classList.add(
+                    valid
+                    ? "preview"
+                    : "bad-preview"
+                );
+
+            }
+
+        }
+
+    }
+
+}
+
+
+/* ================= GAME OVER ================= */
 
 function checkGameOver(){
 
     const available =
-        pieces.filter(p => p !== null);
+        pieces.filter(Boolean);
 
-    if(available.length === 0) return;
+    if(available.length === 0){
+        return;
+    }
 
     for(const shape of available){
 
-        for(let r=0;r<BOARD_SIZE;r++){
+        for(let r=0;r<SIZE;r++){
 
-            for(let c=0;c<BOARD_SIZE;c++){
+            for(let c=0;c<SIZE;c++){
 
                 if(canPlace(shape,r,c)){
-
                     return;
-
                 }
 
             }
@@ -1270,13 +1686,16 @@ function checkGameOver(){
 }
 
 
-/* ================= GAME OVER ================= */
-
 function gameOver(){
+
+    stopDrag();
 
     finalScoreEl.textContent = score;
 
-    let isNewRecord = false;
+    const isNewRecord =
+        score > Number(
+            localStorage.getItem("warblast-best") || 0
+        );
 
     if(score > bestScore){
 
@@ -1287,15 +1706,15 @@ function gameOver(){
             bestScore
         );
 
-        isNewRecord = true;
-
     }
 
     bestEl.textContent = bestScore;
     homeBestEl.textContent = bestScore;
 
     newRecordEl.style.display =
-        isNewRecord ? "block" : "none";
+        isNewRecord
+        ? "block"
+        : "none";
 
     showScreen(gameOverScreen);
 
@@ -1305,67 +1724,62 @@ function gameOver(){
 /* ================= BUTTONS ================= */
 
 document
-    .getElementById("playBtn")
-    .addEventListener("click", startGame);
+.getElementById("playBtn")
+.addEventListener("click",startGame);
 
 
 document
-    .getElementById("againBtn")
-    .addEventListener("click", startGame);
+.getElementById("againBtn")
+.addEventListener("click",startGame);
 
 
 document
-    .getElementById("overHomeBtn")
-    .addEventListener("click",()=>{
+.getElementById("overHomeBtn")
+.addEventListener("click",()=>{
 
-        homeBestEl.textContent = bestScore;
+    stopDrag();
 
-        showScreen(homeScreen);
+    homeBestEl.textContent = bestScore;
 
-    });
+    showScreen(homeScreen);
 
-
-document
-    .getElementById("homeBtn")
-    .addEventListener("click",()=>{
-
-        document
-            .getElementById("pauseModal")
-            .classList.add("show");
-
-    });
+});
 
 
 document
-    .getElementById("confirmHome")
-    .addEventListener("click",()=>{
+.getElementById("homeBtn")
+.addEventListener("click",()=>{
 
-        document
-            .getElementById("pauseModal")
-            .classList.remove("show");
+    stopDrag();
 
-        homeBestEl.textContent = bestScore;
+    homeModal.classList.add("show");
 
-        showScreen(homeScreen);
-
-    });
+});
 
 
 document
-    .getElementById("cancelHome")
-    .addEventListener("click",()=>{
+.getElementById("confirmHome")
+.addEventListener("click",()=>{
 
-        document
-            .getElementById("pauseModal")
-            .classList.remove("show");
+    homeModal.classList.remove("show");
 
-    });
+    homeBestEl.textContent = bestScore;
+
+    showScreen(homeScreen);
+
+});
 
 
-/* ================= SOUND BUTTON ================= */
+document
+.getElementById("cancelHome")
+.addEventListener("click",()=>{
 
-const soundBtn =
-    document.getElementById("soundBtn");
+    homeModal.classList.remove("show");
+
+});
+
+
+/* ================= SOUND ================= */
 
 function updateSoundButton(){
 
@@ -1389,12 +1803,16 @@ soundBtn.addEventListener("click",()=>{
 
     updateSoundButton();
 
-    beep();
+    if(soundOn){
+        beep();
+    }
 
 });
 
 
 /* ================= PWA INSTALL ================= */
+
+let deferredPrompt = null;
 
 const installBtn =
     document.getElementById("installBtn");
@@ -1413,19 +1831,24 @@ window.addEventListener(
 );
 
 
-installBtn.addEventListener("click",async()=>{
+installBtn.addEventListener(
+    "click",
+    async()=>{
 
-    if(!deferredPrompt) return;
+        if(!deferredPrompt) return;
 
-    deferredPrompt.prompt();
+        deferredPrompt.prompt();
 
-    await deferredPrompt.userChoice;
+        try{
+            await deferredPrompt.userChoice;
+        }catch(e){}
 
-    deferredPrompt = null;
+        deferredPrompt = null;
 
-    installBtn.style.display = "none";
+        installBtn.style.display = "none";
 
-});
+    }
+);
 
 
 window.addEventListener(
@@ -1438,19 +1861,28 @@ window.addEventListener(
 );
 
 
-/* ================= SERVICE WORKER ================= */
+/* ================= PWA SERVICE WORKER ================= */
 
 if("serviceWorker" in navigator){
 
-    window.addEventListener("load",()=>{
+    window.addEventListener(
+        "load",
+        ()=>{
 
-        navigator.serviceWorker
+            navigator.serviceWorker
             .register("./sw.js")
             .catch(()=>{});
 
-    });
+        }
+    );
 
 }
+
+
+/* ================= INITIAL UI ================= */
+
+homeBestEl.textContent = bestScore;
+bestEl.textContent = bestScore;
 
 </script>
 

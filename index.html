@@ -1,1890 +1,312 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-<title>WarBlast</title>
-
-<link rel="manifest" href="./manifest.webmanifest">
-<meta name="theme-color" content="#07111f">
-
-<style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    -webkit-tap-highlight-color:transparent;
-}
-
-html,body{
-    width:100%;
-    min-height:100%;
-}
-
-body{
-    font-family:Arial,Helvetica,sans-serif;
-    background:
-        radial-gradient(circle at top,#10233d 0%,#050b14 55%,#02060b 100%);
-    color:#fff;
-    overflow-x:hidden;
-    overscroll-behavior:none;
-}
-
-button{
-    font:inherit;
-    border:0;
-    cursor:pointer;
-}
-
-.app{
-    width:100%;
-    max-width:520px;
-    min-height:100vh;
-    margin:auto;
-    padding:18px 15px 30px;
-}
-
-.screen{
-    display:none;
-}
-
-.screen.active{
-    display:block;
-}
-
-/* ================= HOME ================= */
-
-.home{
-    min-height:calc(100vh - 48px);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-}
-
-.logo{
-    font-size:clamp(44px,13vw,58px);
-    line-height:1;
-    font-weight:900;
-    letter-spacing:-3px;
-    background:linear-gradient(135deg,#fff,#65d9ff,#587cff);
-    -webkit-background-clip:text;
-    background-clip:text;
-    -webkit-text-fill-color:transparent;
-}
-
-.subtitle{
-    margin-top:8px;
-    color:#7f9ab8;
-    font-size:12px;
-    letter-spacing:2px;
-}
-
-.home-buttons{
-    width:100%;
-    max-width:330px;
-    margin-top:38px;
-}
-
-.main-btn{
-    width:100%;
-    padding:16px;
-    margin:6px 0;
-    border-radius:15px;
-    color:#fff;
-    font-size:17px;
-    font-weight:800;
-    background:linear-gradient(135deg,#168cff,#615cff);
-    box-shadow:0 8px 25px rgba(46,126,255,.25);
-}
-
-.main-btn:active{
-    transform:scale(.97);
-}
-
-.secondary-btn{
-    background:#101d2d;
-    border:1px solid #203750;
-    box-shadow:none;
-}
-
-.stats-card{
-    width:100%;
-    max-width:330px;
-    margin-top:25px;
-    padding:16px 10px;
-    display:flex;
-    justify-content:space-around;
-    background:rgba(12,27,44,.8);
-    border:1px solid #1c354d;
-    border-radius:17px;
-}
-
-.stat span{
-    display:block;
-    color:#718ba6;
-    font-size:10px;
-    text-transform:uppercase;
-    letter-spacing:1px;
-}
-
-.stat strong{
-    display:block;
-    margin-top:5px;
-    font-size:21px;
-}
-
-.world-chat{
-    width:100%;
-    max-width:330px;
-    margin-top:22px;
-    padding:15px;
-    background:#091827;
-    border:1px solid #1a344c;
-    border-radius:17px;
-}
-
-.chat-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:8px;
-}
-
-.chat-title{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    text-align:left;
-}
-
-.chat-icon{
-    font-size:24px;
-}
-
-.chat-title strong{
-    display:block;
-    font-size:14px;
-}
-
-.chat-title span{
-    display:block;
-    margin-top:3px;
-    color:#617b95;
-    font-size:10px;
-}
-
-.coming-soon{
-    padding:5px 7px;
-    border-radius:7px;
-    background:#162b40;
-    color:#55c8ff;
-    font-size:8px;
-    white-space:nowrap;
-}
-
-.chat-preview{
-    margin-top:13px;
-    padding:13px;
-    background:#071321;
-    border-radius:12px;
-    color:#7891aa;
-    font-size:12px;
-    line-height:1.5;
-}
-
-.chat-preview b{
-    color:#55c8ff;
-}
-
-.chat-status{
-    margin-top:9px;
-    color:#526b83;
-    font-size:9px;
-}
-
-.chat-status span{
-    color:#55c8ff;
-}
-
-.credit{
-    margin-top:22px;
-    text-align:center;
-}
-
-.credit-label{
-    color:#526a82;
-    font-size:9px;
-    text-transform:uppercase;
-    letter-spacing:2px;
-}
-
-.credit-name{
-    margin-top:5px;
-    font-size:16px;
-    font-weight:bold;
-}
-
-.credit-role{
-    margin-top:3px;
-    color:#637d96;
-    font-size:10px;
-}
-
-.home-footer{
-    margin-top:22px;
-    color:#526a82;
-    font-size:10px;
-}
-
-/* ================= GAME ================= */
-
-.game-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-bottom:14px;
-}
-
-.game-title{
-    font-size:24px;
-    font-weight:900;
-}
-
-.icon-btn{
-    width:42px;
-    height:42px;
-    border-radius:12px;
-    background:#101d2d;
-    color:#fff;
-    border:1px solid #203750;
-    font-size:18px;
-}
-
-.score-row{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:8px;
-    margin-bottom:14px;
-}
-
-.score-box{
-    padding:10px;
-    text-align:center;
-    background:#0c1b2c;
-    border:1px solid #1b344d;
-    border-radius:13px;
-}
-
-.score-box span{
-    display:block;
-    color:#718aa4;
-    font-size:9px;
-    text-transform:uppercase;
-}
-
-.score-box strong{
-    display:block;
-    margin-top:3px;
-    font-size:19px;
-}
-
-.board{
-    width:min(92vw,430px);
-    aspect-ratio:1;
-    margin:auto;
-    padding:6px;
-    display:grid;
-    grid-template-columns:repeat(8,1fr);
-    gap:4px;
-    background:#071321;
-    border:1px solid #203a54;
-    border-radius:15px;
-    box-shadow:0 15px 45px rgba(0,0,0,.35);
-    touch-action:none;
-}
-
-.cell{
-    min-width:0;
-    min-height:0;
-    border-radius:6px;
-    background:#0d1c2b;
-    border:1px solid rgba(255,255,255,.025);
-    transition:background .08s,transform .08s;
-}
-
-.cell.filled{
-    background:linear-gradient(135deg,#28a9ff,#575dff);
-    box-shadow:
-        inset 0 0 10px rgba(255,255,255,.2),
-        0 2px 7px rgba(48,113,255,.3);
-}
-
-.cell.preview{
-    background:rgba(50,180,255,.42);
-    transform:scale(.94);
-}
-
-.cell.bad-preview{
-    background:rgba(255,70,70,.38);
-    transform:scale(.94);
-}
-
-.pieces-title{
-    margin:18px 0 8px;
-    color:#728ba5;
-    text-align:center;
-    font-size:10px;
-    text-transform:uppercase;
-    letter-spacing:1.5px;
-}
-
-.pieces{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
-    min-height:92px;
-}
-
-.piece-slot{
-    min-height:90px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#091727;
-    border:1px solid #183149;
-    border-radius:14px;
-    transition:border-color .12s,background .12s;
-}
-
-.piece-slot.selected{
-    border-color:#45c8ff;
-    background:#0c2034;
-}
-
-.piece{
-    display:grid;
-    gap:3px;
-    padding:8px;
-    cursor:grab;
-    touch-action:none;
-    user-select:none;
-    -webkit-user-select:none;
-}
-
-.piece:active{
-    cursor:grabbing;
-}
-
-.block{
-    width:18px;
-    height:18px;
-    border-radius:4px;
-    background:linear-gradient(135deg,#35c5ff,#625cff);
-    box-shadow:0 2px 5px rgba(45,126,255,.3);
-}
-
-.empty-block{
-    width:18px;
-    height:18px;
-}
-
-.game-help{
-    margin-top:12px;
-    text-align:center;
-    color:#526b84;
-    font-size:10px;
-}
-
-/* ================= DRAG GHOST ================= */
-
-.drag-ghost{
-    position:fixed;
-    z-index:1000;
-    pointer-events:none;
-    display:grid;
-    gap:3px;
-    padding:6px;
-    opacity:.92;
-    transform:translate(-50%,-125%) scale(1.08);
-    filter:drop-shadow(0 10px 15px rgba(0,0,0,.35));
-}
-
-.drag-ghost .block{
-    width:20px;
-    height:20px;
-}
-
-.drag-ghost .empty-block{
-    width:20px;
-    height:20px;
-}
-
-/* ================= GAME OVER ================= */
-
-.game-over{
-    min-height:calc(100vh - 48px);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-}
-
-.game-over-icon{
-    font-size:62px;
-}
-
-.game-over h2{
-    margin-top:8px;
-    font-size:34px;
-}
-
-.final-score{
-    margin-top:8px;
-    color:#7892ac;
-    font-size:14px;
-}
-
-.final-score strong{
-    display:block;
-    margin-top:5px;
-    color:#fff;
-    font-size:42px;
-}
-
-.new-record{
-    display:none;
-    margin-top:10px;
-    color:#50c8ff;
-    font-weight:bold;
-}
-
-.over-buttons{
-    width:100%;
-    max-width:330px;
-    margin-top:30px;
-}
-
-/* ================= MODAL ================= */
-
-.modal{
-    position:fixed;
-    inset:0;
-    z-index:2000;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    background:rgba(0,0,0,.72);
-}
-
-.modal.show{
-    display:flex;
-}
-
-.modal-box{
-    width:100%;
-    max-width:340px;
-    padding:22px;
-    background:#0a1929;
-    border:1px solid #24415b;
-    border-radius:20px;
-    text-align:center;
-}
-
-.modal-box h3{
-    margin-bottom:12px;
-}
-
-.modal-box p{
-    margin-bottom:18px;
-    color:#718aa4;
-    font-size:13px;
-    line-height:1.6;
-}
-
-/* ================= SMALL SCREEN ================= */
-
-@media(max-width:380px){
-
-    .block,
-    .empty-block{
-        width:15px;
-        height:15px;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>WarBlast</title>
+
+  <!-- PWA Installation Settings -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="WarBlast">
+  <meta name="theme-color" content="#0f172a">
+
+  <!-- Embedded Web App Manifest -->
+  <link rel="manifest" href='data:application/manifest+json,{
+    "name": "WarBlast",
+    "short_name": "WarBlast",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#0f172a",
+    "theme_color": "#0f172a",
+    "orientation": "portrait",
+    "icons": [
+      {
+        "src": "https://img.icons8.com/emoji/512/000000/bomb-emoji.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "any maskable"
+      }
+    ]
+  }'>
+
+  <style>
+    * { box-sizing: border-box; user-select: none; -webkit-user-select: none; margin: 0; padding: 0; outline: none; }
+    body {
+      background: #0f172a; color: #f8fafc; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      display: flex; flex-direction: column; align-items: center; justify-content: start;
+      min-height: 100vh; padding: 10px; touch-action: none; overflow: hidden;
     }
 
-    .piece{
-        gap:2px;
+    .header { text-align: center; margin-bottom: 5px; margin-top: 10px; width: 100%; }
+    .header h1 { font-size: 2rem; font-weight: 800; color: #facc15; letter-spacing: -1px; margin-bottom: 2px; }
+    .score-container { display: flex; gap: 10px; font-weight: bold; justify-content: center; width: 100%; }
+    .score-box { background: #1e293b; padding: 6px 14px; border-radius: 8px; border: 1px solid #334155; font-size: 1rem; color: #e2e8f0; }
+    #score-val { color: #3b82f6; font-size: 1.1rem; }
+    #best-val { color: #a1a1aa; font-size: 1.1rem; }
+    
+    #grid {
+      display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px;
+      background: #1e293b; padding: 8px; border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 90vw; max-width: 360px; height: 90vw; max-height: 360px;
+      margin-top: 15px; margin-bottom: 15px;
     }
+    .cell { background: #334155; border-radius: 4px; transition: background 0.1s ease; }
+    .cell.filled { background: #3b82f6; box-shadow: inset 0 0 5px rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.1); }
+    .cell.preview { background: rgba(59, 130, 246, 0.4); }
 
-    .drag-ghost .block,
-    .drag-ghost .empty-block{
-        width:17px;
-        height:17px;
+    #pieces-container {
+      display: flex; justify-content: space-around; align-items: center;
+      width: 90vw; max-width: 360px; margin-top: 5px; height: 90px;
     }
-}
-</style>
+    .piece-slot { width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; }
+    .piece { display: grid; gap: 2px; cursor: grab; touch-action: none; transform: scale(0.9); transition: transform 0.1s ease; }
+    .piece-block { background: #3b82f6; border-radius: 2px; height: 16px; width: 16px; }
+    .piece.dragging { position: fixed; pointer-events: none; z-index: 1000; transform: scale(1.1); opacity: 0.9; }
+
+    .credits { margin-top: auto; font-size: 0.7rem; color: #475569; text-align: center; width: 100%; padding-bottom: 5px;}
+  </style>
 </head>
-
 <body>
 
-<div class="app">
-
-<!-- ================= HOME ================= -->
-
-<section id="homeScreen" class="screen active">
-
-<div class="home">
-
-    <div class="logo">WARBLAST</div>
-
-    <div class="subtitle">
-        BLOCK • BLAST • CONQUER
+  <div class="header">
+    <h1>WARBLAST</h1>
+    <div class="score-container">
+      <div class="score-box">SCORE: <span id="score-val">0</span></div>
+      <div class="score-box">BEST: <span id="best-val">0</span></div>
     </div>
-
-    <div class="home-buttons">
-
-        <button class="main-btn" id="playBtn">
-            ▶ PLAY
-        </button>
-
-        <button class="main-btn secondary-btn" id="soundBtn">
-            🔊 SOUND ON
-        </button>
-
-        <button
-            class="main-btn secondary-btn"
-            id="installBtn"
-            style="display:none;">
-            📱 INSTALL GAME
-        </button>
-
-    </div>
-
-    <div class="stats-card">
-
-        <div class="stat">
-            <span>Best Score</span>
-            <strong id="homeBest">0</strong>
-        </div>
-
-        <div class="stat">
-            <span>Game</span>
-            <strong>∞</strong>
-        </div>
-
-    </div>
-
-    <div class="world-chat">
-
-        <div class="chat-header">
-
-            <div class="chat-title">
-                <div class="chat-icon">🌎</div>
-
-                <div>
-                    <strong>World Chat</strong>
-                    <span>Connect with WarBlast players</span>
-                </div>
-            </div>
-
-            <div class="coming-soon">
-                COMING SOON
-            </div>
-
-        </div>
-
-        <div class="chat-preview">
-            💬 World Chat is currently under development.
-            <br><br>
-            <b>Samir is working on it 👨‍💻</b>
-        </div>
-
-        <div class="chat-status">
-            Global player chat will arrive in a future update
-            <span>• Future Update</span>
-        </div>
-
-    </div>
-
-    <div class="credit">
-        <div class="credit-label">Game Developer</div>
-        <div class="credit-name">Samir Parajuli</div>
-        <div class="credit-role">
-            Creator & Developer of WarBlast ⚔️
-        </div>
-    </div>
-
-    <div class="home-footer">
-        WarBlast © 2026
-    </div>
-
-</div>
-
-</section>
-
-
-<!-- ================= GAME ================= -->
-
-<section id="gameScreen" class="screen">
-
-<div class="game-header">
-
-    <div class="game-title">
-        ⚔️ WarBlast
-    </div>
-
-    <button class="icon-btn" id="homeBtn">
-        🏠
-    </button>
-
-</div>
-
-<div class="score-row">
-
-    <div class="score-box">
-        <span>Score</span>
-        <strong id="score">0</strong>
-    </div>
-
-    <div class="score-box">
-        <span>Combo</span>
-        <strong id="combo">0</strong>
-    </div>
-
-    <div class="score-box">
-        <span>Best</span>
-        <strong id="best">0</strong>
-    </div>
-
-</div>
-
-<div id="board" class="board"></div>
-
-<div class="pieces-title">
-    Drag a block onto the board
-</div>
-
-<div id="pieces" class="pieces"></div>
-
-<div class="game-help">
-    Tap a block and tap the board, or drag it directly.
-</div>
-
-</section>
-
-
-<!-- ================= GAME OVER ================= -->
-
-<section id="gameOverScreen" class="screen">
-
-<div class="game-over">
-
-    <div class="game-over-icon">
-        💥
-    </div>
-
-    <h2>GAME OVER</h2>
-
-    <div class="final-score">
-        Your Score
-        <strong id="finalScore">0</strong>
-    </div>
-
-    <div id="newRecord" class="new-record">
-        🏆 NEW BEST SCORE!
-    </div>
-
-    <div class="over-buttons">
-
-        <button class="main-btn" id="againBtn">
-            🔄 PLAY AGAIN
-        </button>
-
-        <button class="main-btn secondary-btn" id="overHomeBtn">
-            🏠 HOME
-        </button>
-
-    </div>
-
-</div>
-
-</section>
-
-</div>
-
-
-<!-- ================= HOME MODAL ================= -->
-
-<div id="homeModal" class="modal">
-
-<div class="modal-box">
-
-    <h3>🏠 Return Home?</h3>
-
-    <p>
-        Your current game will end if you return to the home screen.
-    </p>
-
-    <button class="main-btn" id="confirmHome">
-        🏠 HOME
-    </button>
-
-    <button class="main-btn secondary-btn" id="cancelHome">
-        CANCEL
-    </button>
-
-</div>
-
-</div>
-
-
-<script>
-
-/* =========================================================
-   WARBLAST
-   ========================================================= */
-
-const SIZE = 8;
-
-let board = [];
-let pieces = [];
-
-let selectedPiece = null;
-
-let score = 0;
-let combo = 0;
-
-let bestScore =
-    Number(localStorage.getItem("warblast-best") || 0);
-
-let soundOn =
-    localStorage.getItem("warblast-sound") !== "off";
-
-let drag = null;
-let dragGhost = null;
-
-
-/* ================= DOM ================= */
-
-const homeScreen =
-    document.getElementById("homeScreen");
-
-const gameScreen =
-    document.getElementById("gameScreen");
-
-const gameOverScreen =
-    document.getElementById("gameOverScreen");
-
-const boardEl =
-    document.getElementById("board");
-
-const piecesEl =
-    document.getElementById("pieces");
-
-const scoreEl =
-    document.getElementById("score");
-
-const comboEl =
-    document.getElementById("combo");
-
-const bestEl =
-    document.getElementById("best");
-
-const homeBestEl =
-    document.getElementById("homeBest");
-
-const finalScoreEl =
-    document.getElementById("finalScore");
-
-const newRecordEl =
-    document.getElementById("newRecord");
-
-const homeModal =
-    document.getElementById("homeModal");
-
-const soundBtn =
-    document.getElementById("soundBtn");
-
-
-/* ================= SCREEN ================= */
-
-function showScreen(screen){
-
-    homeScreen.classList.remove("active");
-    gameScreen.classList.remove("active");
-    gameOverScreen.classList.remove("active");
-
-    screen.classList.add("active");
-
-    window.scrollTo(0,0);
-}
-
-
-/* ================= SOUND ================= */
-
-function beep(frequency=500,duration=.1){
-
-    if(!soundOn) return;
-
-    try{
-
-        const AudioContext =
-            window.AudioContext ||
-            window.webkitAudioContext;
-
-        const ctx = new AudioContext();
-
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-
-        osc.type = "sine";
-        osc.frequency.value = frequency;
-
-        gain.gain.setValueAtTime(
-            .06,
-            ctx.currentTime
-        );
-
-        gain.gain.exponentialRampToValueAtTime(
-            .001,
-            ctx.currentTime + duration
-        );
-
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-
-        osc.start();
-        osc.stop(ctx.currentTime + duration);
-
-    }catch(e){}
-
-}
-
-
-/* ================= SHAPES ================= */
-
-const SHAPES = [
-
-    [[1]],
-
-    [[1,1]],
-
-    [[1,1,1]],
-
-    [[1,1,1,1]],
-
-    [[1,1,1,1,1]],
-
-    [[1,1],
-     [1,1]],
-
-    [[1,0],
-     [1,1]],
-
-    [[0,1],
-     [1,1]],
-
-    [[1,1],
-     [1,0]],
-
-    [[1,1],
-     [0,1]],
-
-    [[1,1,1],
-     [0,1,0]],
-
-    [[0,1,0],
-     [1,1,1]],
-
-    [[1,0,0],
-     [1,1,1]],
-
-    [[0,0,1],
-     [1,1,1]],
-
-    [[1,1,1],
-     [1,1,1]],
-
-    [[1,1,1],
-     [1,0,1]],
-
-    [[1,0],
-     [1,0],
-     [1,1]],
-
-    [[0,1],
-     [0,1],
-     [1,1]]
-
-];
-
-
-/* ================= GAME ================= */
-
-function emptyBoard(){
-
-    return Array.from(
-        {length:SIZE},
-        () => Array(SIZE).fill(false)
-    );
-
-}
-
-
-function startGame(){
-
-    stopDrag();
-
-    board = emptyBoard();
-
-    score = 0;
-    combo = 0;
-    selectedPiece = null;
-
-    scoreEl.textContent = "0";
-    comboEl.textContent = "0";
-    bestEl.textContent = bestScore;
-
-    generatePieces();
-    renderBoard();
-
-    showScreen(gameScreen);
-
-}
-
-
-/* ================= PIECES ================= */
-
-function randomShape(){
-
-    const source =
-        SHAPES[
-            Math.floor(Math.random()*SHAPES.length)
-        ];
-
-    return source.map(row => [...row]);
-
-}
-
-
-function generatePieces(){
-
-    pieces = [
-        randomShape(),
-        randomShape(),
-        randomShape()
+  </div>
+
+  <div id="grid"></div>
+  <div id="pieces-container"></div>
+
+  <div class="credits">
+    Developed by Samir Parajuli with Gemini
+  </div>
+
+  <script>
+    const GRID_SIZE = 8;
+    let gridData = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(0));
+    let score = 0;
+    let bestScore = parseInt(localStorage.getItem('warblast_best')) || 0;
+
+    const SHAPES = [
+      [[1]], [[1,1]], [[1],[1]], [[1,1],[1,1]], 
+      [[1,1,1]], [[1],[1],[1]], [[1,1,1],[0,1,0]], [[1,1],[1,0]],
+      [[1,0],[1,1]], [[1,1,1],[1,0,0]], [[1,1,1],[0,0,1]]
     ];
 
-    selectedPiece = null;
+    const gridEl = document.getElementById('grid');
+    const scoreEl = document.getElementById('score-val');
+    const bestEl = document.getElementById('best-val');
+    const piecesContainer = document.getElementById('pieces-container');
 
-    renderPieces();
-
-}
-
-
-function countBlocks(shape){
-
-    let count = 0;
-
-    for(const row of shape){
-
-        for(const value of row){
-
-            if(value) count++;
-
-        }
-
+    function init() {
+      bestEl.textContent = bestScore;
+      createGrid();
+      loadSavedGame();
     }
 
-    return count;
-
-}
-
-
-/* ================= RENDER PIECES ================= */
-
-function renderPieces(){
-
-    piecesEl.innerHTML = "";
-
-    pieces.forEach((shape,index)=>{
-
-        const slot =
-            document.createElement("div");
-
-        slot.className = "piece-slot";
-
-        if(selectedPiece === index){
-            slot.classList.add("selected");
+    function createGrid() {
+      gridEl.innerHTML = '';
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          const cell = document.createElement('div');
+          cell.classList.add('cell');
+          cell.dataset.row = r;
+          cell.dataset.col = c;
+          gridEl.appendChild(cell);
         }
+      }
+    }
 
-        if(!shape){
+    function saveGame() {
+      localStorage.setItem('warblast_grid', JSON.stringify(gridData));
+      localStorage.setItem('warblast_score', score);
+      localStorage.setItem('warblast_best', bestScore);
+    }
 
-            piecesEl.appendChild(slot);
-            return;
+    function loadSavedGame() {
+      const savedGrid = localStorage.getItem('warblast_grid');
+      const savedScore = localStorage.getItem('warblast_score');
 
+      if (savedGrid && savedScore) {
+        gridData = JSON.parse(savedGrid);
+        score = parseInt(savedScore);
+        scoreEl.textContent = score;
+        renderGrid();
+      }
+      spawnPieces();
+    }
+
+    function renderGrid() {
+      const cells = gridEl.children;
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          const idx = r * GRID_SIZE + c;
+          cells[idx].className = 'cell' + (gridData[r][c] ? ' filled' : '');
         }
+      }
+    }
 
-        const piece =
-            createPieceElement(shape,index);
-
+    function spawnPieces() {
+      piecesContainer.innerHTML = '';
+      for (let i = 0; i < 3; i++) {
+        const slot = document.createElement('div');
+        slot.classList.add('piece-slot');
+        const shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+        const piece = createPieceEl(shape);
         slot.appendChild(piece);
-
-        piecesEl.appendChild(slot);
-
-    });
-
-}
-
-
-function createPieceElement(shape,index){
-
-    const piece =
-        document.createElement("div");
-
-    piece.className = "piece";
-
-    piece.dataset.index = index;
-
-    for(let r=0;r<shape.length;r++){
-
-        for(let c=0;c<shape[r].length;c++){
-
-            const block =
-                document.createElement("div");
-
-            block.className =
-                shape[r][c]
-                ? "block"
-                : "empty-block";
-
-            piece.appendChild(block);
-
-        }
-
+        piecesContainer.appendChild(slot);
+        enableDrag(piece, shape);
+      }
     }
 
-    /*
-       Pointer Events:
-       - Mobile touch
-       - Mouse
-       - Stylus
-    */
-
-    piece.addEventListener(
-        "pointerdown",
-        startDrag
-    );
-
-    return piece;
-
-}
-
-
-/* ================= BOARD ================= */
-
-function renderBoard(){
-
-    boardEl.innerHTML = "";
-
-    for(let r=0;r<SIZE;r++){
-
-        for(let c=0;c<SIZE;c++){
-
-            const cell =
-                document.createElement("div");
-
-            cell.className = "cell";
-
-            if(board[r][c]){
-                cell.classList.add("filled");
-            }
-
-            cell.dataset.row = r;
-            cell.dataset.col = c;
-
-            boardEl.appendChild(cell);
-
-        }
-
-    }
-
-}
-
-
-/* ================= PLACEMENT ================= */
-
-function canPlace(shape,row,col){
-
-    for(let r=0;r<shape.length;r++){
-
-        for(let c=0;c<shape[r].length;c++){
-
-            if(!shape[r][c]) continue;
-
-            const rr = row+r;
-            const cc = col+c;
-
-            if(
-                rr < 0 ||
-                rr >= SIZE ||
-                cc < 0 ||
-                cc >= SIZE
-            ){
-                return false;
-            }
-
-            if(board[rr][cc]){
-                return false;
-            }
-
-        }
-
-    }
-
-    return true;
-
-}
-
-
-function placePiece(index,row,col){
-
-    const shape = pieces[index];
-
-    if(!shape) return false;
-
-    if(!canPlace(shape,row,col)){
-
-        beep(180,.08);
-
-        return false;
-
-    }
-
-    for(let r=0;r<shape.length;r++){
-
-        for(let c=0;c<shape[r].length;c++){
-
-            if(shape[r][c]){
-
-                board[row+r][col+c] = true;
-
-            }
-
-        }
-
-    }
-
-    score += countBlocks(shape);
-
-    combo++;
-
-    pieces[index] = null;
-    selectedPiece = null;
-
-    clearLines();
-
-    updateScore();
-
-    beep(620,.08);
-
-    if(navigator.vibrate){
-        navigator.vibrate(12);
-    }
-
-    renderBoard();
-    renderPieces();
-
-    if(pieces.every(piece => piece === null)){
-
-        generatePieces();
-
-    }
-
-    setTimeout(checkGameOver,70);
-
-    return true;
-
-}
-
-
-/* ================= SCORE ================= */
-
-function updateScore(){
-
-    scoreEl.textContent = score;
-    comboEl.textContent = combo;
-
-    if(score > bestScore){
-
-        bestScore = score;
-
-        localStorage.setItem(
-            "warblast-best",
-            bestScore
-        );
-
-    }
-
-    bestEl.textContent = bestScore;
-
-}
-
-
-/* ================= CLEAR LINES ================= */
-
-function clearLines(){
-
-    const rows = [];
-    const cols = [];
-
-    for(let r=0;r<SIZE;r++){
-
-        if(board[r].every(Boolean)){
-            rows.push(r);
-        }
-
-    }
-
-    for(let c=0;c<SIZE;c++){
-
-        let full = true;
-
-        for(let r=0;r<SIZE;r++){
-
-            if(!board[r][c]){
-                full = false;
-                break;
-            }
-
-        }
-
-        if(full){
-            cols.push(c);
-        }
-
-    }
-
-    if(rows.length === 0 && cols.length === 0){
-        return;
-    }
-
-    const totalLines =
-        rows.length + cols.length;
-
-    score +=
-        totalLines *
-        10 *
-        Math.max(combo,1);
-
-    for(const r of rows){
-
-        for(let c=0;c<SIZE;c++){
-            board[r][c] = false;
-        }
-
-    }
-
-    for(const c of cols){
-
-        for(let r=0;r<SIZE;r++){
-            board[r][c] = false;
-        }
-
-    }
-
-    beep(800,.14);
-
-    if(navigator.vibrate){
-        navigator.vibrate(35);
-    }
-
-}
-
-
-/* =========================================================
-   SMOOTH DRAG SYSTEM
-   ========================================================= */
-
-function startDrag(event){
-
-    event.preventDefault();
-
-    const piece =
-        event.currentTarget;
-
-    const index =
-        Number(piece.dataset.index);
-
-    if(!pieces[index]) return;
-
-    stopDrag();
-
-    selectedPiece = index;
-
-    renderPieces();
-
-    drag = {
-        index:index,
-        pointerId:event.pointerId,
-        x:event.clientX,
-        y:event.clientY,
-        row:null,
-        col:null
-    };
-
-    piece.setPointerCapture?.(event.pointerId);
-
-    createDragGhost(
-        pieces[index],
-        event.clientX,
-        event.clientY
-    );
-
-    updateDragPosition(
-        event.clientX,
-        event.clientY
-    );
-
-    window.addEventListener(
-        "pointermove",
-        onDragMove,
-        {passive:false}
-    );
-
-    window.addEventListener(
-        "pointerup",
-        onDragEnd,
-        {passive:false}
-    );
-
-    window.addEventListener(
-        "pointercancel",
-        onDragEnd,
-        {passive:false}
-    );
-
-}
-
-
-function onDragMove(event){
-
-    if(!drag) return;
-
-    event.preventDefault();
-
-    drag.x = event.clientX;
-    drag.y = event.clientY;
-
-    updateDragPosition(
-        event.clientX,
-        event.clientY
-    );
-
-}
-
-
-function onDragEnd(event){
-
-    if(!drag) return;
-
-    event.preventDefault();
-
-    const row = drag.row;
-    const col = drag.col;
-    const index = drag.index;
-
-    const valid =
-        row !== null &&
-        col !== null &&
-        pieces[index] &&
-        canPlace(
-            pieces[index],
-            row,
-            col
-        );
-
-    stopDrag();
-
-    if(valid){
-
-        placePiece(index,row,col);
-
-    }else{
-
-        renderBoard();
-        renderPieces();
-
-    }
-
-}
-
-
-function stopDrag(){
-
-    window.removeEventListener(
-        "pointermove",
-        onDragMove
-    );
-
-    window.removeEventListener(
-        "pointerup",
-        onDragEnd
-    );
-
-    window.removeEventListener(
-        "pointercancel",
-        onDragEnd
-    );
-
-    if(dragGhost){
-
-        dragGhost.remove();
-        dragGhost = null;
-
-    }
-
-    drag = null;
-
-}
-
-
-/* ================= DRAG GHOST ================= */
-
-function createDragGhost(shape,x,y){
-
-    dragGhost =
-        document.createElement("div");
-
-    dragGhost.className =
-        "drag-ghost";
-
-    for(const row of shape){
-
-        for(const value of row){
-
-            const block =
-                document.createElement("div");
-
-            block.className =
-                value
-                ? "block"
-                : "empty-block";
-
-            dragGhost.appendChild(block);
-
-        }
-
-    }
-
-    document.body.appendChild(dragGhost);
-
-    positionGhost(x,y);
-
-}
-
-
-function positionGhost(x,y){
-
-    if(!dragGhost) return;
-
-    dragGhost.style.left = x + "px";
-    dragGhost.style.top = y + "px";
-
-}
-
-
-/* ================= BOARD DRAG PREVIEW ================= */
-
-function updateDragPosition(x,y){
-
-    if(!drag) return;
-
-    positionGhost(x,y);
-
-    const rect =
-        boardEl.getBoundingClientRect();
-
-    /*
-       Pointer must be inside board.
-    */
-
-    if(
-        x < rect.left ||
-        x > rect.right ||
-        y < rect.top ||
-        y > rect.bottom
-    ){
-
-        drag.row = null;
-        drag.col = null;
-
-        clearPreview();
-
-        return;
-
-    }
-
-    const cellWidth =
-        rect.width / SIZE;
-
-    const cellHeight =
-        rect.height / SIZE;
-
-    /*
-       The ghost is shown above the finger.
-       Move the preview slightly upward so
-       the player can see the target.
-    */
-
-    const targetX = x;
-    const targetY = y - 65;
-
-    let col =
-        Math.floor(
-            (targetX - rect.left) /
-            cellWidth
-        );
-
-    let row =
-        Math.floor(
-            (targetY - rect.top) /
-            cellHeight
-        );
-
-    const shape =
-        pieces[drag.index];
-
-    if(!shape){
-
-        clearPreview();
-        return;
-
-    }
-
-    /*
-       Center the shape around the pointer.
-    */
-
-    const shapeWidth =
-        shape[0].length;
-
-    const shapeHeight =
-        shape.length;
-
-    col -= Math.floor(shapeWidth / 2);
-    row -= Math.floor(shapeHeight / 2);
-
-    drag.row = row;
-    drag.col = col;
-
-    showPreview(
-        shape,
-        row,
-        col
-    );
-
-}
-
-
-/* ================= PREVIEW ================= */
-
-function clearPreview(){
-
-    boardEl
-        .querySelectorAll(".preview,.bad-preview")
-        .forEach(cell=>{
-            cell.classList.remove(
-                "preview",
-                "bad-preview"
-            );
+    function createPieceEl(shape) {
+      const piece = document.createElement('div');
+      piece.classList.add('piece');
+      piece.style.gridTemplateRows = `repeat(${shape.length}, 16px)`;
+      piece.style.gridTemplateColumns = `repeat(${shape[0].length}, 16px)`;
+
+      shape.forEach(row => {
+        row.forEach(val => {
+          const block = document.createElement('div');
+          if (val) block.classList.add('piece-block');
+          piece.appendChild(block);
         });
+      });
+      return piece;
+    }
 
-}
+    function enableDrag(el, shape) {
+      let active = false, touchXOffset = 0, touchYOffset = 0;
 
+      const start = (e) => {
+        active = true;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const rect = el.getBoundingClientRect();
+        
+        // Accurate offset tracking for responsiveness
+        touchXOffset = clientX - rect.left;
+        touchYOffset = clientY - rect.top;
 
-function showPreview(shape,row,col){
+        el.classList.add('dragging');
+        moveAt(clientX, clientY);
+      };
 
-    clearPreview();
+      const move = (e) => {
+        if (!active) return;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        moveAt(clientX, clientY);
+      };
 
-    const valid =
-        canPlace(shape,row,col);
+      const end = (e) => {
+        if (!active) return;
+        active = false;
+        el.classList.remove('dragging');
+        el.style.left = ''; el.style.top = '';
 
-    for(let r=0;r<shape.length;r++){
+        const rect = gridEl.getBoundingClientRect();
+        const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+        const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
 
-        for(let c=0;c<shape[r].length;c++){
+        // Snapping and forgiveness tolerance logic
+        const cellSize = rect.width / GRID_SIZE;
+        const targetCol = Math.floor((clientX - rect.left - touchXOffset) / cellSize);
+        const targetRow = Math.floor((clientY - rect.top - touchYOffset) / cellSize);
 
-            if(!shape[r][c]) continue;
-
-            const rr = row+r;
-            const cc = col+c;
-
-            if(
-                rr < 0 ||
-                rr >= SIZE ||
-                cc < 0 ||
-                cc >= SIZE
-            ){
-                continue;
+        // Standard placement check (top-left block snap)
+        if (canPlace(shape, targetRow, targetCol)) {
+          completePlacement(shape, targetRow, targetCol);
+        } else {
+            // Forgiving check (center block snap for awkward shapes)
+            const forgvRow = targetRow + 1;
+            if (canPlace(shape, forgvRow, targetCol)){
+                completePlacement(shape, forgvRow, targetCol);
             }
-
-            const cell =
-                boardEl.querySelector(
-                    `.cell[data-row="${rr}"][data-col="${cc}"]`
-                );
-
-            if(cell){
-
-                cell.classList.add(
-                    valid
-                    ? "preview"
-                    : "bad-preview"
-                );
-
-            }
-
         }
+      };
 
+      function completePlacement(shape, r, c){
+          placePiece(shape, r, c);
+          el.parentElement.removeChild(el);
+          checkClears();
+          saveGame();
+          if (piecesContainer.querySelectorAll('.piece').length === 0) {
+            spawnPieces();
+          }
+      }
+
+      function moveAt(x, y) {
+        // Keeps the shape centered below the point of touch
+        el.style.left = `${x - 20}px`;
+        el.style.top = `${y - 40}px`;
+      }
+
+      el.addEventListener('touchstart', start, {passive: false});
+      window.addEventListener('touchmove', move, {passive: false});
+      window.addEventListener('touchend', end);
+      el.addEventListener('mousedown', start);
+      window.addEventListener('mousemove', move);
+      window.addEventListener('mouseup', end);
     }
 
-}
-
-
-/* ================= GAME OVER ================= */
-
-function checkGameOver(){
-
-    const available =
-        pieces.filter(Boolean);
-
-    if(available.length === 0){
-        return;
-    }
-
-    for(const shape of available){
-
-        for(let r=0;r<SIZE;r++){
-
-            for(let c=0;c<SIZE;c++){
-
-                if(canPlace(shape,r,c)){
-                    return;
-                }
-
+    function canPlace(shape, r, c) {
+      for (let row = 0; row < shape.length; row++) {
+        for (let col = 0; col < shape[row].length; col++) {
+          if (shape[row][col]) {
+            let targetR = r + row;
+            let targetC = c + col;
+            if (targetR < 0 || targetR >= GRID_SIZE || targetC < 0 || targetC >= GRID_SIZE || gridData[targetR][targetC]) {
+              return false;
             }
-
+          }
         }
-
+      }
+      return true;
     }
 
-    gameOver();
-
-}
-
-
-function gameOver(){
-
-    stopDrag();
-
-    finalScoreEl.textContent = score;
-
-    const isNewRecord =
-        score > Number(
-            localStorage.getItem("warblast-best") || 0
-        );
-
-    if(score > bestScore){
-
+    function placePiece(shape, r, c) {
+      for (let row = 0; row < shape.length; row++) {
+        for (let col = 0; col < shape[row].length; col++) {
+          if (shape[row][col]) {
+            gridData[r + row][c + col] = 1;
+            score += 10;
+          }
+        }
+      }
+      if (score > bestScore) {
         bestScore = score;
-
-        localStorage.setItem(
-            "warblast-best",
-            bestScore
-        );
-
+        bestEl.textContent = bestScore;
+      }
+      scoreEl.textContent = score;
+      renderGrid();
     }
 
-    bestEl.textContent = bestScore;
-    homeBestEl.textContent = bestScore;
+    function checkClears() {
+      let rowsToClear = [], colsToClear = [];
 
-    newRecordEl.style.display =
-        isNewRecord
-        ? "block"
-        : "none";
+      for (let r = 0; r < GRID_SIZE; r++) {
+        if (gridData[r].every(val => val === 1)) rowsToClear.push(r);
+      }
+      for (let c = 0; c < GRID_SIZE; c++) {
+        if (gridData.every(row => row[c] === 1)) colsToClear.push(c);
+      }
 
-    showScreen(gameOverScreen);
+      rowsToClear.forEach(r => gridData[r].fill(0));
+      colsToClear.forEach(c => gridData.forEach(row => row[c] = 0));
 
-}
-
-
-/* ================= BUTTONS ================= */
-
-document
-.getElementById("playBtn")
-.addEventListener("click",startGame);
-
-
-document
-.getElementById("againBtn")
-.addEventListener("click",startGame);
-
-
-document
-.getElementById("overHomeBtn")
-.addEventListener("click",()=>{
-
-    stopDrag();
-
-    homeBestEl.textContent = bestScore;
-
-    showScreen(homeScreen);
-
-});
-
-
-document
-.getElementById("homeBtn")
-.addEventListener("click",()=>{
-
-    stopDrag();
-
-    homeModal.classList.add("show");
-
-});
-
-
-document
-.getElementById("confirmHome")
-.addEventListener("click",()=>{
-
-    homeModal.classList.remove("show");
-
-    homeBestEl.textContent = bestScore;
-
-    showScreen(homeScreen);
-
-});
-
-
-document
-.getElementById("cancelHome")
-.addEventListener("click",()=>{
-
-    homeModal.classList.remove("show");
-
-});
-
-
-/* ================= SOUND ================= */
-
-function updateSoundButton(){
-
-    soundBtn.textContent =
-        soundOn
-        ? "🔊 SOUND ON"
-        : "🔇 SOUND OFF";
-
-}
-
-updateSoundButton();
-
-soundBtn.addEventListener("click",()=>{
-
-    soundOn = !soundOn;
-
-    localStorage.setItem(
-        "warblast-sound",
-        soundOn ? "on" : "off"
-    );
-
-    updateSoundButton();
-
-    if(soundOn){
-        beep();
+      if (rowsToClear.length || colsToClear.length) {
+        score += (rowsToClear.length + colsToClear.length) * 100;
+        scoreEl.textContent = score;
+        renderGrid();
+      }
     }
 
-});
-
-
-/* ================= PWA INSTALL ================= */
-
-let deferredPrompt = null;
-
-const installBtn =
-    document.getElementById("installBtn");
-
-window.addEventListener(
-    "beforeinstallprompt",
-    event => {
-
-        event.preventDefault();
-
-        deferredPrompt = event;
-
-        installBtn.style.display = "block";
-
-    }
-);
-
-
-installBtn.addEventListener(
-    "click",
-    async()=>{
-
-        if(!deferredPrompt) return;
-
-        deferredPrompt.prompt();
-
-        try{
-            await deferredPrompt.userChoice;
-        }catch(e){}
-
-        deferredPrompt = null;
-
-        installBtn.style.display = "none";
-
-    }
-);
-
-
-window.addEventListener(
-    "appinstalled",
-    ()=>{
-
-        installBtn.style.display = "none";
-
-    }
-);
-
-
-/* ================= PWA SERVICE WORKER ================= */
-
-if("serviceWorker" in navigator){
-
-    window.addEventListener(
-        "load",
-        ()=>{
-
-            navigator.serviceWorker
-            .register("./sw.js")
-            .catch(()=>{});
-
-        }
-    );
-
-}
-
-
-/* ================= INITIAL UI ================= */
-
-homeBestEl.textContent = bestScore;
-bestEl.textContent = bestScore;
-
-</script>
-
+    init();
+  </script>
 </body>
 </html>

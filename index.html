@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>WarBlast - Tactic Puzzle Ops</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg-primary: #070a11;
+      --bg-card: #0f172a;
+      --grid-bg: #030712;
+      --grid-cell: #111827;
+      --accent-red: #ef4444;
+      --accent-gold: #f59e0b;
+      --accent-cyan: #06b6d4;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: #f8fafc;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+      overflow-x: hidden;
+    }
+
+    /* Screen Management */
+    .screen { display: none; }
+    .screen.active { display: flex; }
+
+    /* Custom Glassmorphism UI */
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Grid Board styling */
+    .grid-board {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      gap: 5px;
+      background-color: var(--grid-bg);
+      border: 3px solid #1e293b;
+      border-radius: 16px;
+      padding: 8px;
+      box-shadow: 0 12px 30px -5px rgba(0,0,0,0.9), inset 0 0 20px rgba(239, 68, 68, 0.15);
+    }
+
+    .grid-cell {
+      background-color: var(--grid-cell);
+      border-radius: 6px;
+      transition: background-color 0.15s ease, transform 0.1s ease;
+      position: relative;
+    }
+
+    .grid-cell.highlight {
+      background-color: rgba(239, 68, 68, 0.5) !important;
+      transform: scale(0.95);
+      box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.8);
+    }
+
+    /* Shape Palette Styles */
+    .block-red { background: linear-gradient(135deg, #ef4444, #991b1b); box-shadow: inset 0 0 6px rgba(255,255,255,0.4); }
+    .block-amber { background: linear-gradient(135deg, #f59e0b, #b45309); box-shadow: inset 0 0 6px rgba(255,255,255,0.4); }
+    .block-emerald { background: linear-gradient(135deg, #10b981, #047857); box-shadow: inset 0 0 6px rgba(255,255,255,0.4); }
+    .block-cyan { background: linear-gradient(135deg, #06b6d4, #0e7490); box-shadow: inset 0 0 6px rgba(255,255,255,0.4); }
+    .block-purple { background: linear-gradient(135deg, #a855f7, #6b21a8); box-shadow: inset 0 0 6px rgba(255,255,255,0.4); }
+
+    /* Drag Ghost */
+    #drag-ghost {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.9;
+      transform: translate(-50%, -50%);
+      display: none;
+    }
+
+    .tray-item {
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      cursor: grab;
+    }
+    .tray-item:active { cursor: grabbing; }
+    .tray-item.disabled { opacity: 0.25; pointer-events: none; }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #090d16; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-center items-center p-2 sm:p-4 max-w-md mx-auto relative">
+
+  <!-- ==================== HOME SCREEN / MAIN MENU ==================== -->
+  <section id="screen-home" class="screen active w-full flex-col justify-between items-center h-full min-h-[92vh] py-4">
+    
+    <!-- Top Navigation Header -->
+    <header class="w-full flex justify-between items-center px-1">
+      <button id="btn-signin-modal" class="flex items-center gap-2 bg-slate-900 border border-slate-700/60 px-3 py-1.5 rounded-xl hover:bg-slate-800 transition">
+        <span class="text-base">👤</span>
+        <div class="text-left">
+          <span id="nav-user-name" class="block text-xs font-bold text-slate-200">Guest Operative</span>
+          <span class="block text-[9px] text-amber-400 font-semibold uppercase tracking-wider">Tap to Sign In</span>
+        </div>
+      </button>
+
+      <div class="flex items-center gap-2">
+        <!-- World / Global Chat Button -->
+        <button id="btn-world-modal" class="p-2 rounded-xl bg-slate-900 border border-slate-700 hover:bg-slate-800 transition relative">
+          <span class="text-lg">🌐</span>
+          <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-ping"></span>
+        </button>
+        <!-- Credits Button -->
+        <button id="btn-credits-modal" class="p-2 rounded-xl bg-slate-900 border border-slate-700 hover:bg-slate-800 transition">
+          <span class="text-lg">🎖️</span>
+        </button>
+        <!-- Settings Button -->
+        <button id="btn-settings-modal" class="p-2 rounded-xl bg-slate-900 border border-slate-700 hover:bg-slate-800 transition">
+          <span class="text-lg">⚙️</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Title & Logo -->
+    <div class="text-center my-6">
+      <div class="inline-block px-3 py-1 bg-red-500/10 border border-red-500/30 rounded-full text-red-400 text-[10px] font-bold tracking-widest uppercase mb-2">
+        Tactical Block Ops v2.0
+      </div>
+      <h1 class="text-5xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-400 to-red-600 drop-shadow-[0_0_20px_rgba(239,68,68,0.4)]">
+        WARBLAST
+      </h1>
+      <p class="text-xs text-slate-400 font-medium tracking-wide mt-1">Grid Elimination Strategy</p>
+    </div>
+
+    <!-- Mode Select Options -->
+    <div class="w-full space-y-3 my-2">
+      <button id="btn-play-campaign" class="w-full py-4 bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-black rounded-2xl text-base tracking-wider shadow-lg shadow-red-950/50 flex items-center justify-center gap-3 transition transform active:scale-98">
+        <span>🎮</span> CAMPAIGN MISSIONS
+      </button>
+
+      <button id="btn-play-endless" class="w-full py-3.5 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-200 font-bold rounded-2xl text-sm tracking-wider flex items-center justify-center gap-3 transition transform active:scale-98">
+        <span>🔥</span> ENDLESS SURVIVAL
+      </button>
+
+      <div class="grid grid-cols-2 gap-3">
+        <button id="btn-stats-modal" class="py-3 bg-slate-900/80 border border-slate-800 hover:bg-slate-800/80 text-slate-300 font-bold rounded-xl text-xs flex items-center justify-center gap-2">
+          <span>📊</span> Statistics
+        </button>
+        <button id="btn-guide-modal" class="py-3 bg-slate-900/80 border border-slate-800 hover:bg-slate-800/80 text-slate-300 font-bold rounded-xl text-xs flex items-center justify-center gap-2">
+          <span>📖</span> How to Play
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer Developer Badge -->
+    <footer class="w-full text-center mt-4">
+      <p class="text-[11px] text-slate-500 font-semibold">
+        Developed by <span class="text-amber-400 font-bold">Samir Parajuli</span>
+      </p>
+    </footer>
+  </section>
+
+  <!-- ==================== GAMEPLAY SCREEN ==================== -->
+  <section id="screen-game" class="screen w-full flex-col justify-between items-center h-full min-h-[92vh]">
+    <header class="w-full flex justify-between items-center mb-2 px-1">
+      <button id="btn-back-home" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 transition text-xs font-bold text-slate-300 flex items-center gap-1">
+        <span>🏠 Home</span>
+      </button>
+
+      <div class="flex items-center gap-2">
+        <span id="mode-badge" class="px-2.5 py-1 bg-red-500/20 border border-red-500/40 text-red-400 font-black text-xs rounded-lg uppercase">
+          Lvl 1
+        </span>
+        <button id="btn-game-settings" class="p-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300">⚙️</button>
+      </div>
+    </header>
+
+    <!-- Mission Target Bar -->
+    <section id="mission-panel" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl p-2.5 mb-2 shadow-lg">
+      <div class="flex justify-between items-center mb-1 text-xs">
+        <span class="font-bold text-slate-300">Objective: <span id="mission-type" class="text-amber-400">Target Score</span></span>
+        <span class="font-bold text-slate-400"><span id="mission-progress-num">0</span> / <span id="mission-target-num">1000</span></span>
+      </div>
+      <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-slate-700/50">
+        <div id="mission-bar" class="bg-gradient-to-r from-amber-500 to-red-500 h-full w-0 transition-all duration-300"></div>
+      </div>
+    </section>
+
+    <!-- Score Header -->
+    <section class="w-full grid grid-cols-2 gap-2 mb-2">
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-2 text-center shadow">
+        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold block">Score</span>
+        <span id="current-score" class="text-xl font-black text-red-400">0</span>
+      </div>
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-2 text-center shadow">
+        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold block">High Score</span>
+        <span id="high-score" class="text-xl font-black text-amber-400">0</span>
+      </div>
+    </section>
+
+    <!-- Tactical Grid Canvas Box -->
+    <main class="w-full aspect-square relative mb-2">
+      <div id="grid-container" class="grid-board w-full h-full"></div>
+
+      <!-- Game Over Modal Overlay -->
+      <div id="modal-gameover" class="absolute inset-0 bg-slate-950/95 backdrop-blur-md z-40 rounded-2xl flex flex-col items-center justify-center p-4 text-center hidden border-2 border-red-500/50">
+        <h2 class="text-3xl font-black text-red-500 mb-1 tracking-wider">GAME OVER</h2>
+        <p class="text-xs text-slate-400 mb-4 font-semibold">No valid grid space left for remaining blocks!</p>
+
+        <div class="w-full space-y-1.5 bg-slate-900 p-3 rounded-xl border border-slate-800 mb-4 text-xs">
+          <div class="flex justify-between">
+            <span class="text-slate-400">Final Score:</span>
+            <span id="go-score" class="font-bold text-red-400">0</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Lines Cleared:</span>
+            <span id="go-lines" class="font-bold text-emerald-400">0</span>
+          </div>
+        </div>
+
+        <button id="btn-restart" class="w-full py-3 bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-black rounded-xl text-sm tracking-wider shadow-lg transition transform active:scale-95">
+          RESTART MISSION
+        </button>
+      </div>
+
+      <!-- Level Complete Modal Overlay -->
+      <div id="modal-levelcomplete" class="absolute inset-0 bg-slate-950/95 backdrop-blur-md z-40 rounded-2xl flex flex-col items-center justify-center p-4 text-center hidden border-2 border-amber-500/50">
+        <h2 class="text-3xl font-black text-amber-400 mb-1 tracking-wider">MISSION CLEARED!</h2>
+        <p class="text-xs text-slate-300 mb-4 font-semibold">Stage Objective Accomplished!</p>
+
+        <button id="btn-next-level" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black rounded-xl text-sm tracking-wider shadow-lg transition transform active:scale-95">
+          NEXT MISSION
+        </button>
+      </div>
+    </main>
+
+    <!-- Tray for Blocks -->
+    <footer class="w-full bg-slate-900/90 border border-slate-800 rounded-xl p-2 h-28 flex justify-around items-center shadow-xl">
+      <div id="tray-0" class="tray-item flex items-center justify-center w-20 h-20"></div>
+      <div id="tray-1" class="tray-item flex items-center justify-center w-20 h-20"></div>
+      <div id="tray-2" class="tray-item flex items-center justify-center w-20 h-20"></div>
+    </footer>
+  </section>
+
+  <!-- Ghost Drag element -->
+  <div id="drag-ghost"></div>
+
+  <!-- ==================== MODALS & POPUPS ==================== -->
+
+  <!-- Sign In Modal -->
+  <div id="modal-signin" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 w-11/12 max-w-xs shadow-2xl">
+      <h2 class="text-lg font-black text-red-500 text-center mb-1">OPERATIVE SIGN IN</h2>
+      <p class="text-xs text-slate-400 text-center mb-4">Connect profile to save progress locally</p>
+      
+      <input id="input-username" type="text" placeholder="Enter Operative Name" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-200 mb-3 outline-none focus:border-red-500">
+      
+      <button id="btn-save-username" class="w-full py-2.5 bg-red-600 hover:bg-red-500 text-white font-black rounded-xl text-xs mb-2 transition">
+        SAVE PROFILE
+      </button>
+      <button id="btn-close-signin" class="w-full py-2 bg-slate-800 text-slate-400 font-bold rounded-xl text-xs">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Credits Modal -->
+  <div id="modal-credits" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 w-11/12 max-w-xs shadow-2xl text-center">
+      <div class="text-3xl mb-1">🎖️</div>
+      <h2 class="text-lg font-black text-amber-400 mb-1">WARBLAST CREDITS</h2>
+      <p class="text-xs text-slate-400 mb-4">Game Architecture & Engineering</p>
+
+      <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl mb-4 text-xs">
+        <span class="text-slate-400 block text-[10px] uppercase font-bold">Lead Developer</span>
+        <span class="text-amber-300 font-black text-sm block mt-0.5">Samir Parajuli</span>
+      </div>
+
+      <button id="btn-close-credits" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs border border-slate-700">
+        Close
+      </button>
+    </div>
+  </div>
+
+  <!-- World / Global Chat Modal -->
+  <div id="modal-world" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 w-11/12 max-w-xs shadow-2xl text-center">
+      <div class="text-3xl mb-1 animate-bounce">🌐</div>
+      <h2 class="text-lg font-black text-cyan-400 mb-1">WORLD CHAT OPS</h2>
+      <p class="text-xs text-slate-400 mb-3">Global Communications & Leaderboards</p>
+
+      <!-- Announcement Banner -->
+      <div class="bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl mb-3 text-left">
+        <span class="text-amber-400 font-bold text-xs block mb-1">🚧 Future Update Preview</span>
+        <p class="text-[11px] text-slate-300 leading-relaxed">
+          <strong class="text-amber-300">Samir Parajuli is actively working on this feature!</strong> Global chat, clan battles, and world leaderboards are coming in the next release.
+        </p>
+      </div>
+
+      <!-- Mock Chat Window -->
+      <div class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 h-28 overflow-y-auto mb-3 text-left space-y-1.5 text-[10px]">
+        <div><span class="text-red-400 font-bold">Commander_X:</span> <span class="text-slate-300">Cleared Lvl 10!</span></div>
+        <div><span class="text-amber-400 font-bold">Samir:</span> <span class="text-slate-300">Working on multiplayer features right now!</span></div>
+        <div><span class="text-cyan-400 font-bold">AlphaSquad:</span> <span class="text-slate-300">Can't wait for world chat updates!</span></div>
+      </div>
+
+      <button id="btn-close-world" class="w-full py-2 bg-slate-800 text-slate-300 font-bold rounded-xl text-xs border border-slate-700">
+        Close
+      </button>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="modal-settings" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 w-11/12 max-w-xs shadow-2xl">
+      <h2 class="text-lg font-black text-slate-200 text-center mb-3">SYSTEM SETTINGS</h2>
+      <div class="space-y-3 mb-4 text-xs">
+        <div class="flex justify-between items-center bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+          <span class="text-slate-300 font-semibold">Sound FX</span>
+          <input id="toggle-sfx" type="checkbox" checked class="accent-red-500 w-4 h-4">
+        </div>
+      </div>
+      <button id="btn-close-settings" class="w-full py-2 bg-slate-800 text-slate-300 font-bold rounded-xl text-xs border border-slate-700">
+        Save & Close
+      </button>
+    </div>
+  </div>
+
+  <!-- Level Select Modal -->
+  <div id="modal-levels" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 w-11/12 max-w-xs shadow-2xl text-center">
+      <h2 class="text-lg font-black text-amber-400 mb-3">SELECT MISSION</h2>
+      <div id="levels-grid" class="grid grid-cols-3 gap-2 my-3 max-h-60 overflow-y-auto p-1"></div>
+      <button id="btn-close-levels" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs border border-slate-700">
+        Close
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistics Modal -->
+  <div id="modal-stats" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 w-11/12 max-w-xs shadow-2xl text-center">
+      <h2 class="text-lg font-black text-red-500 mb-3">OPERATIVE STATS</h2>
+      <div class="space-y-2 text-xs text-left mb-4">
+        <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between">
+          <span class="text-slate-400">High Score:</span>
+          <span id="stat-highscore" class="font-bold text-amber-400">0</span>
+        </div>
+        <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between">
+          <span class="text-slate-400">Unlocked Missions:</span>
+          <span id="stat-unlocked" class="font-bold text-emerald-400">1</span>
+        </div>
+      </div>
+      <button id="btn-close-stats" class="w-full py-2 bg-slate-800 text-slate-300 font-bold rounded-xl text-xs border border-slate-700">
+        Close
+      </button>
+    </div>
+  </div>
+
+  <!-- How to Play Guide Modal -->
+  <div id="modal-guide" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 w-11/12 max-w-xs shadow-2xl text-center">
+      <h2 class="text-lg font-black text-slate-200 mb-2">FIELD MANUAL</h2>
+      <div class="text-xs text-slate-300 space-y-2 text-left mb-4 bg-slate-950 p-3 rounded-xl border border-slate-800">
+        <p>🧩 <strong>Drag & Drop:</strong> Drag blocks from the bottom tray onto the 8x8 grid.</p>
+        <p>💥 <strong>Clear Lines:</strong> Fill whole rows or columns to destroy blocks and earn points.</p>
+        <p>⚠️ <strong>Game Over Rule:</strong> If NO empty space is left for remaining pieces, mission fails instantly!</p>
+      </div>
+      <button id="btn-close-guide" class="w-full py-2 bg-slate-800 text-slate-300 font-bold rounded-xl text-xs border border-slate-700">
+        Understood
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== GAME LOGIC SCRIPT ==================== -->
+  <script>
+    const AudioEngine = {
+      ctx: null,
+      enabled: true,
+      init() {
+        if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      },
+      playTone(freq, type = 'sine', duration = 0.1, gainVal = 0.1) {
+        if (!this.enabled) return;
+        this.init();
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch(e) {}
+      },
+      sfxPlace() { this.playTone(280, 'triangle', 0.08, 0.15); },
+      sfxClear() {
+        [350, 450, 600, 800].forEach((f, i) => setTimeout(() => this.playTone(f, 'sine', 0.12, 0.12), i * 40));
+      },
+      sfxGameOver() {
+        [240, 200, 160, 120].forEach((f, i) => setTimeout(() => this.playTone(f, 'sawtooth', 0.2, 0.15), i * 90));
+      },
+      sfxWin() {
+        [400, 520, 660, 880].forEach((f, i) => setTimeout(() => this.playTone(f, 'square', 0.2, 0.12), i * 80));
+      }
+    };
+
+    const GRID_SIZE = 8;
+    const LEVELS = Array.from({ length: 15 }, (_, i) => ({
+      level: i + 1,
+      targetScore: (i + 1) * 800,
+      targetLines: (i + 1) * 4
+    }));
+
+    const SHAPES = [
+      { matrix: [[1]], color: 'block-cyan' },
+      { matrix: [[1,1],[1,1]], color: 'block-red' },
+      { matrix: [[1,1,1],[1,1,1],[1,1,1]], color: 'block-amber' },
+      { matrix: [[1,1,1]], color: 'block-emerald' },
+      { matrix: [[1],[1],[1]], color: 'block-emerald' },
+      { matrix: [[1,1,1,1]], color: 'block-purple' },
+      { matrix: [[1,0],[1,0],[1,1]], color: 'block-amber' },
+      { matrix: [[0,1],[0,1],[1,1]], color: 'block-amber' },
+      { matrix: [[1,1,1],[0,1,0]], color: 'block-cyan' }
+    ];
+
+    let gameMode = 'campaign'; // 'campaign' or 'endless'
+    let currentLevel = 1;
+    let unlockedLevels = parseInt(localStorage.getItem('wb_unlocked_level')) || 1;
+    let grid = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(0));
+    let gridColors = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(''));
+    let trayPieces = [null, null, null];
+    let score = 0;
+    let highScore = parseInt(localStorage.getItem('warblast_hi')) || 0;
+    let levelLinesCleared = 0;
+    let activeDragIndex = null;
+    let dragShape = null;
+    let userName = localStorage.getItem('wb_user') || 'Guest Operative';
+
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+    }
+
+    function initGame(mode = 'campaign', levelNum = 1) {
+      gameMode = mode;
+      currentLevel = levelNum;
+      score = 0;
+      levelLinesCleared = 0;
+
+      grid = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(0));
+      gridColors = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(''));
+
+      document.getElementById('modal-gameover').classList.add('hidden');
+      document.getElementById('modal-levelcomplete').classList.add('hidden');
+
+      if (gameMode === 'endless') {
+        document.getElementById('mission-panel').classList.add('hidden');
+        document.getElementById('mode-badge').innerText = 'Endless';
+      } else {
+        document.getElementById('mission-panel').classList.remove('hidden');
+        document.getElementById('mode-badge').innerText = `Lvl ${currentLevel}`;
+      }
+
+      showScreen('screen-game');
+      renderGrid();
+      updateScoreUI();
+      updateMissionProgress();
+      refillTray();
+    }
+
+    function renderGrid() {
+      const container = document.getElementById('grid-container');
+      container.innerHTML = '';
+
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          const cell = document.createElement('div');
+          cell.className = 'grid-cell';
+          cell.dataset.row = r;
+          cell.dataset.col = c;
+
+          if (grid[r][c] === 1) {
+            cell.classList.add(gridColors[r][c]);
+          }
+          container.appendChild(cell);
+        }
+      }
+    }
+
+    function generateRandomPiece() {
+      const shapeObj = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+      return JSON.parse(JSON.stringify(shapeObj));
+    }
+
+    function refillTray() {
+      for (let i = 0; i < 3; i++) {
+        trayPieces[i] = generateRandomPiece();
+      }
+      renderTray();
+      checkGameOver();
+    }
+
+    function renderTray() {
+      for (let i = 0; i < 3; i++) {
+        const trayEl = document.getElementById(`tray-${i}`);
+        trayEl.innerHTML = '';
+
+        const piece = trayPieces[i];
+        if (piece) {
+          const matrix = piece.matrix;
+          const rows = matrix.length;
+          const cols = matrix[0].length;
+
+          const pieceGrid = document.createElement('div');
+          pieceGrid.className = 'grid gap-1';
+          pieceGrid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+          for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+              const block = document.createElement('div');
+              block.className = `w-4 h-4 rounded-md ${matrix[r][c] ? piece.color : 'bg-transparent'}`;
+              pieceGrid.appendChild(block);
+            }
+          }
+
+          trayEl.appendChild(pieceGrid);
+          trayEl.classList.remove('disabled');
+        } else {
+          trayEl.classList.add('disabled');
+        }
+      }
+    }
+
+    function setupDragAndDrop() {
+      const trayItems = document.querySelectorAll('.tray-item');
+      const ghost = document.getElementById('drag-ghost');
+
+      trayItems.forEach((item, index) => {
+        const handleStart = (e) => {
+          if (!trayPieces[index]) return;
+          activeDragIndex = index;
+          dragShape = trayPieces[index];
+
+          ghost.innerHTML = item.innerHTML;
+          ghost.style.display = 'block';
+
+          const touch = e.touches ? e.touches[0] : e;
+          updateGhostPosition(touch.clientX, touch.clientY);
+        };
+
+        item.addEventListener('mousedown', handleStart);
+        item.addEventListener('touchstart', handleStart, { passive: true });
+      });
+
+      const handleMove = (e) => {
+        if (activeDragIndex === null) return;
+        const touch = e.touches ? e.touches[0] : e;
+        updateGhostPosition(touch.clientX, touch.clientY);
+        highlightPlacement(touch.clientX, touch.clientY);
+      };
+
+      const handleEnd = (e) => {
+        if (activeDragIndex === null) return;
+        const touch = e.changedTouches ? e.changedTouches[0] : e;
+        attemptPiecePlacement(touch.clientX, touch.clientY);
+
+        ghost.style.display = 'none';
+        activeDragIndex = null;
+        dragShape = null;
+        clearHighlights();
+      };
+
+      window.addEventListener('mousemove', handleMove);
+      window.addEventListener('touchmove', handleMove, { passive: true });
+      window.addEventListener('mouseup', handleEnd);
+      window.addEventListener('touchend', handleEnd);
+    }
+
+    function updateGhostPosition(x, y) {
+      const ghost = document.getElementById('drag-ghost');
+      ghost.style.left = `${x}px`;
+      ghost.style.top = `${y - 35}px`;
+    }
+
+    function getGridCellFromCoords(x, y) {
+      const container = document.getElementById('grid-container');
+      const rect = container.getBoundingClientRect();
+
+      if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) return null;
+
+      const cellSize = rect.width / GRID_SIZE;
+      const col = Math.floor((x - rect.left) / cellSize);
+      const row = Math.floor((y - rect.top) / cellSize);
+
+      if (row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE) {
+        return { row, col };
+      }
+      return null;
+    }
+
+    function canFitShape(matrix, startRow, startCol) {
+      const rows = matrix.length;
+      const cols = matrix[0].length;
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          if (matrix[r][c] === 1) {
+            const gridR = startRow + r;
+            const gridC = startCol + c;
+
+            if (gridR < 0 || gridR >= GRID_SIZE || gridC < 0 || gridC >= GRID_SIZE) return false;
+            if (grid[gridR][gridC] === 1) return false;
+          }
+        }
+      }
+      return true;
+    }
+
+    function highlightPlacement(x, y) {
+      clearHighlights();
+      const cell = getGridCellFromCoords(x, y - 35);
+      if (!cell || !dragShape) return;
+
+      const matrix = dragShape.matrix;
+      if (canFitShape(matrix, cell.row, cell.col)) {
+        for (let r = 0; r < matrix.length; r++) {
+          for (let c = 0; c < matrix[0].length; c++) {
+            if (matrix[r][c] === 1) {
+              const target = document.querySelector(`[data-row="${cell.row + r}"][data-col="${cell.col + c}"]`);
+              if (target) target.classList.add('highlight');
+            }
+          }
+        }
+      }
+    }
+
+    function clearHighlights() {
+      document.querySelectorAll('.grid-cell').forEach(c => c.classList.remove('highlight'));
+    }
+
+    function attemptPiecePlacement(x, y) {
+      const cell = getGridCellFromCoords(x, y - 35);
+      if (!cell || !dragShape) return;
+
+      const matrix = dragShape.matrix;
+      if (canFitShape(matrix, cell.row, cell.col)) {
+        let placedBlocks = 0;
+        for (let r = 0; r < matrix.length; r++) {
+          for (let c = 0; c < matrix[0].length; c++) {
+            if (matrix[r][c] === 1) {
+              grid[cell.row + r][cell.col + c] = 1;
+              gridColors[cell.row + r][cell.col + c] = dragShape.color;
+              placedBlocks++;
+            }
+          }
+        }
+
+        AudioEngine.sfxPlace();
+        score += placedBlocks * 10;
+
+        trayPieces[activeDragIndex] = null;
+        renderTray();
+        renderGrid();
+
+        evaluateLines();
+
+        if (trayPieces.every(p => p === null)) {
+          refillTray();
+        } else {
+          checkGameOver();
+        }
+      }
+    }
+
+    function evaluateLines() {
+      const rowsToClear = [];
+      const colsToClear = [];
+
+      for (let r = 0; r < GRID_SIZE; r++) {
+        if (grid[r].every(val => val === 1)) rowsToClear.push(r);
+      }
+
+      for (let c = 0; c < GRID_SIZE; c++) {
+        let full = true;
+        for (let r = 0; r < GRID_SIZE; r++) {
+          if (grid[r][c] !== 1) { full = false; break; }
+        }
+        if (full) colsToClear.push(c);
+      }
+
+      const totalClears = rowsToClear.length + colsToClear.length;
+
+      if (totalClears > 0) {
+        levelLinesCleared += totalClears;
+        AudioEngine.sfxClear();
+
+        score += totalClears * 100;
+
+        setTimeout(() => {
+          rowsToClear.forEach(r => {
+            for (let c = 0; c < GRID_SIZE; c++) { grid[r][c] = 0; gridColors[r][c] = ''; }
+          });
+          colsToClear.forEach(c => {
+            for (let r = 0; r < GRID_SIZE; r++) { grid[r][c] = 0; gridColors[r][c] = ''; }
+          });
+
+          renderGrid();
+          updateScoreUI();
+          updateMissionProgress();
+          checkLevelCompletion();
+        }, 200);
+
+      } else {
+        updateScoreUI();
+        updateMissionProgress();
+        checkLevelCompletion();
+      }
+    }
+
+    function checkGameOver() {
+      let anyCanFit = false;
+
+      for (let i = 0; i < 3; i++) {
+        const piece = trayPieces[i];
+        if (!piece) continue;
+
+        for (let r = 0; r < GRID_SIZE; r++) {
+          for (let c = 0; c < GRID_SIZE; c++) {
+            if (canFitShape(piece.matrix, r, c)) {
+              anyCanFit = true;
+              break;
+            }
+          }
+          if (anyCanFit) break;
+        }
+        if (anyCanFit) break;
+      }
+
+      if (!anyCanFit && trayPieces.some(p => p !== null)) {
+        triggerGameOver();
+      }
+    }
+
+    function triggerGameOver() {
+      AudioEngine.sfxGameOver();
+      document.getElementById('go-score').innerText = score;
+      document.getElementById('go-lines').innerText = levelLinesCleared;
+      document.getElementById('modal-gameover').classList.remove('hidden');
+    }
+
+    function checkLevelCompletion() {
+      if (gameMode !== 'campaign') return;
+      const lvl = LEVELS.find(l => l.level === currentLevel) || LEVELS[0];
+      if (score >= lvl.targetScore || levelLinesCleared >= lvl.targetLines) {
+        AudioEngine.sfxWin();
+        if (currentLevel >= unlockedLevels) {
+          unlockedLevels = Math.min(currentLevel + 1, LEVELS.length);
+          localStorage.setItem('wb_unlocked_level', unlockedLevels);
+        }
+        document.getElementById('modal-levelcomplete').classList.remove('hidden');
+      }
+    }
+
+    function updateScoreUI() {
+      document.getElementById('current-score').innerText = score;
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem('warblast_hi', highScore);
+      }
+      document.getElementById('high-score').innerText = highScore;
+    }
+
+    function updateMissionProgress() {
+      if (gameMode !== 'campaign') return;
+      const lvl = LEVELS.find(l => l.level === currentLevel) || LEVELS[0];
+      const target = lvl.targetScore;
+      const progress = Math.min(score, target);
+      const pct = Math.floor((progress / target) * 100);
+
+      document.getElementById('mission-type').innerText = `Target: ${target} pts`;
+      document.getElementById('mission-progress-num').innerText = progress;
+      document.getElementById('mission-target-num').innerText = target;
+      document.getElementById('mission-bar').style.width = `${pct}%`;
+    }
+
+    function setupUI() {
+      document.getElementById('nav-user-name').innerText = userName;
+
+      // Menu Actions
+      document.getElementById('btn-play-campaign').addEventListener('click', () => {
+        renderLevelsGrid();
+        document.getElementById('modal-levels').classList.remove('hidden');
+      });
+
+      document.getElementById('btn-play-endless').addEventListener('click', () => {
+        initGame('endless');
+      });
+
+      document.getElementById('btn-back-home').addEventListener('click', () => {
+        showScreen('screen-home');
+      });
+
+      document.getElementById('btn-restart').addEventListener('click', () => {
+        initGame(gameMode, currentLevel);
+      });
+
+      document.getElementById('btn-next-level').addEventListener('click', () => {
+        initGame('campaign', Math.min(currentLevel + 1, LEVELS.length));
+      });
+
+      // Modals Setup
+      document.getElementById('btn-signin-modal').addEventListener('click', () => {
+        document.getElementById('modal-signin').classList.remove('hidden');
+      });
+      document.getElementById('btn-close-signin').addEventListener('click', () => {
+        document.getElementById('modal-signin').classList.add('hidden');
+      });
+      document.getElementById('btn-save-username').addEventListener('click', () => {
+        const val = document.getElementById('input-username').value.trim();
+        if (val) {
+          userName = val;
+          localStorage.setItem('wb_user', userName);
+          document.getElementById('nav-user-name').innerText = userName;
+        }
+        document.getElementById('modal-signin').classList.add('hidden');
+      });
+
+      document.getElementById('btn-credits-modal').addEventListener('click', () => {
+        document.getElementById('modal-credits').classList.remove('hidden');
+      });
+      document.getElementById('btn-close-credits').addEventListener('click', () => {
+        document.getElementById('modal-credits').classList.add('hidden');
+      });
+
+      document.getElementById('btn-world-modal').addEventListener('click', () => {
+        document.getElementById('modal-world').classList.remove('hidden');
+      });
+      document.getElementById('btn-close-world').addEventListener('click', () => {
+        document.getElementById('modal-world').classList.add('hidden');
+      });
+
+      document.getElementById('btn-settings-modal').addEventListener('click', () => {
+        document.getElementById('modal-settings').classList.remove('hidden');
+      });
+      document.getElementById('btn-game-settings').addEventListener('click', () => {
+        document.getElementById('modal-settings').classList.remove('hidden');
+      });
+      document.getElementById('btn-close-settings').addEventListener('click', () => {
+        AudioEngine.enabled = document.getElementById('toggle-sfx').checked;
+        document.getElementById('modal-settings').classList.add('hidden');
+      });
+
+      document.getElementById('btn-stats-modal').addEventListener('click', () => {
+        document.getElementById('stat-highscore').innerText = highScore;
+        document.getElementById('stat-unlocked').innerText = unlockedLevels;
+        document.getElementById('modal-stats').classList.remove('hidden');
+      });
+      document.getElementById('btn-close-stats').addEventListener('click', () => {
+        document.getElementById('modal-stats').classList.add('hidden');
+      });
+
+      document.getElementById('btn-guide-modal').addEventListener('click', () => {
+        document.getElementById('modal-guide').classList.remove('hidden');
+      });
+      document.getElementById('btn-close-guide').addEventListener('click', () => {
+        document.getElementById('modal-guide').classList.add('hidden');
+      });
+
+      document.getElementById('btn-close-levels').addEventListener('click', () => {
+        document.getElementById('modal-levels').classList.add('hidden');
+      });
+    }
+
+    function renderLevelsGrid() {
+      const gridContainer = document.getElementById('levels-grid');
+      gridContainer.innerHTML = '';
+
+      LEVELS.forEach(lvl => {
+        const btn = document.createElement('button');
+        const isUnlocked = lvl.level <= unlockedLevels;
+
+        btn.className = `p-3 rounded-xl border font-bold flex flex-col items-center justify-center transition ${
+          isUnlocked 
+            ? 'bg-slate-800 border-amber-500/50 text-amber-400 hover:bg-slate-700' 
+            : 'bg-slate-950 border-slate-800 text-slate-600 opacity-50 cursor-not-allowed'
+        }`;
+
+        btn.innerHTML = `
+          <span class="text-sm">Lvl ${lvl.level}</span>
+          <span class="text-[10px] text-slate-400">${isUnlocked ? 'Unlocked' : 'Locked'}</span>
+        `;
+
+        if (isUnlocked) {
+          btn.addEventListener('click', () => {
+            document.getElementById('modal-levels').classList.add('hidden');
+            initGame('campaign', lvl.level);
+          });
+        }
+
+        gridContainer.appendChild(btn);
+      });
+    }
+
+    window.onload = function() {
+      setupUI();
+      setupDragAndDrop();
+    };
+  </script>
+</body>
+</html>
